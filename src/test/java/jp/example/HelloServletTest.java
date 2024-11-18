@@ -1,40 +1,67 @@
 package jp.example;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.json.JSONObject;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class HelloServletTest {
-	
-	@ParameterizedTest
-	@CsvSource(delimiter = '|', textBlock = """
-		# パラメーター	| 期待値	| テスト内容
-		#----------------------------------------------------
-						| World		| null（パラメーター無し）
-		''				| ''		| 空文字
-		' '				| ' '		| 空白
-		' all '			| ' all '	| 両端空白
-		Test ①			| Test ①	| マルチバイト
-		""")
-	void doGet(String param, String expected) throws IOException, ServletException {
-		var req = mock(HttpServletRequest.class);
-		var res = mock(HttpServletResponse.class);
-		var dsp = mock(RequestDispatcher.class);
-		doReturn(dsp).when(req).getRequestDispatcher(any());
-		doReturn(param).when(req).getParameter("name");
+
+	private static Server server;
+
+	@BeforeAll
+	static void startServer() throws Exception {
+		server = new Server(8082);
+		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+		context.setContextPath("/");
+		server.setHandler(context);
+
+		// Servletの登録
+		context.addServlet(new ServletHolder(new HelloServlet()),"/hello");
+		server.start();	
+	}
+
+	@AfterAll
+	static void stopServer() throws Exception {
+		if (server != null && server.isRunning()) {
+			server.stop();
+		}
+	}
+
+	/**
+	 * jsonデータをServletに渡し、jsonデータを取得できること
+	 * @throws Exception
+	 */
+	@Test
+	void testHelloServlet() throws Exception {
+
+		// リクエストテストデータ
+		JSONObject requestJson = new JSONObject();
+        requestJson.put("name", "John");
+        requestJson.put("age", 25);
+
+		HttpClient client = HttpClient.newHttpClient();
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create("http://localhost:8082/hello"))
+				.POST(HttpRequest.BodyPublishers.ofString(requestJson.toString()))
+				.build();
+
+		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+		System.out.println("ステータスコード" + response.statusCode()); 
 		
-		new HelloServlet().doGet(req, res);
-		verify(req).setAttribute("message", expected);
-		verify(req).getRequestDispatcher("/WEB-INF/view/hello.jsp");
-		verify(dsp).forward(req, res);
+		JSONObject result = new JSONObject(response.body());
+
+		assertEquals(200, response.statusCode());
+		assertEquals("Hello, Jetty!", result.optString("message"));
 	}
 }

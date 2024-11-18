@@ -13,4 +13,8 @@ dependencies {
 	testImplementation 'org.mockito:mockito-junit-jupiter:5.+'
 	testing.suites.test.useJUnitJupiter('5.+')
 	configurations { testImplementation.extendsFrom compileOnly }
+	
+	testImplementation("org.eclipse.jetty:jetty-server:11.0.15")
+	testImplementation("org.eclipse.jetty:jetty-servlet:11.0.15")
+	implementation("org.json:json:20240303")
 }
