@@ -29,6 +29,8 @@ public class HelloServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		 // リクエストのエンコーディングを設定
         req.setCharacterEncoding("UTF-8");
+        
+        System.out.println("プロパティ情報" + PropertyUtil.getProperty("db.url"));
 
         // リクエストボディを読み取る
         StringBuilder jsonBody = new StringBuilder();
