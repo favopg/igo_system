@@ -18,4 +18,5 @@ dependencies {
 	testImplementation("org.eclipse.jetty:jetty-servlet:11.0.15")
 	implementation("org.json:json:20240303")
 	implementation group: 'com.microsoft.playwright', name: 'playwright', version: '1.48.0'
+	implementation("mysql:mysql-connector-java:8.0.33")	
 }
