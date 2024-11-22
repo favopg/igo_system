@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- コンソールへの出力 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ファイルへの出力 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- ファイル名のフォーマット -->
+            <fileNamePattern>logs/igosystem-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <!-- 日ごとに分割 -->
+            <maxFileSize>10MB</maxFileSize>
+            <!-- 最大バックアップファイル数 -->
+            <maxHistory>7</maxHistory>
+            <!-- 合計サイズ制限 -->
+            <totalSizeCap>50MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <!-- ミリ秒単位のタイムスタンプ -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- デフォルトのロガー -->
+    <root level="debug">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+</configuration>
