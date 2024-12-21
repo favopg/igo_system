@@ -6,20 +6,28 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * サンプルDAOクラス
+ * エラー設計とか考えてない
+ */
 public class SampleDao {
 
-	public void select() {
+	public JSONObject select() {
 		String jdbcUrl = PropertyUtil.getProperty("db.url");
 		String username = PropertyUtil.getProperty("db.user");
 		String password = PropertyUtil.getProperty("db.password");
-
-		String query = "SELECT * FROM users";
-
+		String query = "SELECT * FROM rosters";
+		JSONObject response = new JSONObject();
+		
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
 		try (
 				Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 				PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -27,20 +35,26 @@ public class SampleDao {
 			) 
 		{
 			ResultSetMetaData metaData = resultSet.getMetaData();
-			Map<String, String> row = new HashMap<>();
+			JSONArray recordsArray = new JSONArray();
+			
 			while (resultSet.next()) {
-				int id = resultSet.getInt("id");
+				String id = resultSet.getString("id");
 				String name = resultSet.getString("name");
 				System.out.println("ID: " + id + ", Name: " + name);
+				JSONObject jsonData = new JSONObject();
 				
 				for(int i = 1; i<= metaData.getColumnCount(); i++) {
-					row.put(metaData.getColumnName(i), resultSet.getString(i));
+					// 1レコード分のカラム設定
+					jsonData.put(metaData.getColumnName(i), resultSet.getString(i));
 				}
+				recordsArray.put(jsonData);	
 			}
-			JSONObject jsonData = new JSONObject(row);
-			System.out.println("データ取得値" + jsonData.toString());
+			response.put("records", recordsArray);
+			System.out.println("データ取得値" + response.toString(2));
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return response;
 	}
 }
