@@ -1,5 +1,6 @@
 package jp.example;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -11,6 +12,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @WebServlet("/sample/igo_system")
 public class GetJsonSampleServlet extends HttpServlet {
 
@@ -21,8 +24,10 @@ public class GetJsonSampleServlet extends HttpServlet {
         String path = req.getServletPath();
         System.out.println("リクエストパス" + path);
                         
-        SampleDao dao = new SampleDao();
-        JSONObject dbResponse = dao.select();
+        JSONObject dbResponse = SampleDao.select("sql/match.sql");
+        
+//        SampleService service = new SampleService();
+//        JSONObject dbResponse = service.getMathes();
 
         // JSONデータを返却
         PrintWriter out = res.getWriter();
@@ -33,7 +38,22 @@ public class GetJsonSampleServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// リクエストのエンコーディングを設定
-        req.setCharacterEncoding("UTF-8");
+		
+		// JSONデータを読み取る
+        StringBuilder jsonData = new StringBuilder();
+        try (BufferedReader reader = req.getReader()) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonData.append(line);
+            }
+        }
+
+        System.out.println("受信したJSONデータ: " + jsonData.toString());
+        
+        ObjectMapper mapper = new ObjectMapper();
+        FormData form = mapper.readValue(jsonData.toString(), FormData.class);
+        
+        System.out.println("json変換後データ" + form.getBlackPlayer());
+		
 	}
 }

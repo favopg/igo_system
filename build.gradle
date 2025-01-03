@@ -20,5 +20,6 @@ dependencies {
 	implementation group: 'com.microsoft.playwright', name: 'playwright', version: '1.48.0'
 	implementation("mysql:mysql-connector-java:8.0.33")	
 	implementation("ch.qos.logback:logback-classic:1.5.12")
-	
+	implementation group: 'org.mindrot', name: 'jbcrypt', version: '0.4'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
 }
