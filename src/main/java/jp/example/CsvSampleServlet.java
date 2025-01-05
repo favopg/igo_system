@@ -3,6 +3,7 @@ package jp.example;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,14 +17,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 
-@WebServlet("/uploadCsv")
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@WebServlet("/sample/uploadCsv")
 @MultipartConfig
 public class CsvSampleServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		
 		Part filePart = request.getPart("file");
 
 		if (filePart == null || filePart.getSize() == 0) {
@@ -57,10 +60,12 @@ public class CsvSampleServlet extends HttpServlet {
         }
         
         // JSON形式に変換してレスポンスを返す
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(jsonData.toString());
-
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(jsonData);
+        System.out.println("CSVアップロード成功" + json.toString());
+        
+        PrintWriter out = response.getWriter();
+        out.print(json.toString());
+        out.flush();
 	}
-
 }
