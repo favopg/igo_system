@@ -30,5 +30,7 @@ dependencies {
 	implementation group: 'org.hibernate', name: 'hibernate-validator-cdi', version: '8.0.2.Final'
 	implementation group: 'org.hibernate.validator', name: 'hibernate-validator-modules', version: '8.0.2.Final', ext: 'pom'
 	
+	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+	
 	
 }

@@ -1,0 +1,22 @@
+INSERT INTO matches 
+  (
+    shop_id, 
+    black_id, 
+    white_id, 
+    result, 
+    result_link, 
+    match_at, 
+    created_at, 
+    updated_at
+  ) 
+VALUES 
+  (
+    1, 
+    ?, 
+    ?, 
+    ?, 
+    ?, 
+    now(), 
+    now(), 
+    now()
+  )

@@ -44,9 +44,7 @@ public class SampleDao {
 		try (
 				Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
 				PreparedStatement preparedStatement = connection.prepareStatement(getSql(sqlFilePath));
-				ResultSet resultSet = preparedStatement.executeQuery();
-			) 
-		{
+				ResultSet resultSet = preparedStatement.executeQuery();) {
 			ResultSetMetaData metaData = resultSet.getMetaData();
 			JSONArray recordsArray = new JSONArray();
 
@@ -66,14 +64,11 @@ public class SampleDao {
 			List<Map<String, Object>> blackVictoryList = dataList.stream()
 					.filter(row -> row.get("result") != null && row.get("result").toString().contains("黒"))
 					.collect(Collectors.toList());
-			
+
 			// 検索結果から白の勝利数を数える
 			List<Map<String, Object>> whiteVictoryList = dataList.stream()
 					.filter(row -> row.get("result") != null && row.get("result").toString().contains("白"))
 					.collect(Collectors.toList());
-
-
-			System.out.println("0件確認" + blackVictoryList.size());
 
 			response.put("records", dataList);
 			response.put("black_victory_cnt", blackVictoryList.size() + "勝");
@@ -86,8 +81,69 @@ public class SampleDao {
 		}
 		return response;
 	}
-	
-	
+
+	public static JSONObject selectRosterId(String sqlFilePath, Map<String, Object> data) {
+		JSONObject response = new JSONObject();
+
+		try (
+				Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+				PreparedStatement preparedStatement = connection.prepareStatement(getSql(sqlFilePath));) {
+
+			int cnt = 1;
+			for (String key : data.keySet()) {
+				// バインド変数設定
+				preparedStatement.setObject(cnt, data.get(key));
+				cnt++;
+			}
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+				ResultSetMetaData metaData = resultSet.getMetaData();
+
+				if (!resultSet.next()) {
+					// 0件エラー
+					response.put("status", "error");
+					response.put("message", "登録されていないユーザを指定されています。");
+					return response;
+				}
+
+				for (int i = 1; i <= metaData.getColumnCount(); i++) {
+					// 1レコード分のカラム設定
+					response.put(metaData.getColumnName(i), resultSet.getObject(i));
+				}
+				response.put("status", "success");
+			}
+
+			System.out.println("データ取得値" + response.toString(2));
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return response;
+	}
+
+	public static void insert(String sqlFilePath, Map<String, Object> data) {
+		try (
+				Connection connection = DriverManager.getConnection(jdbcUrl, username, password);
+				PreparedStatement preparedStatement = connection.prepareStatement(getSql(sqlFilePath));) {
+			int cnt = 1;
+			for (String key : data.keySet()) {
+				// バインド変数設定
+				preparedStatement.setObject(cnt, data.get(key));
+				cnt++;
+			}
+
+			int rowsInserted = preparedStatement.executeUpdate();
+			if (rowsInserted > 0) {
+				System.out.println("データが正常に挿入されました。");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	/**
 	 * SQLファイルパスからSQL文を取得する
 	 * @param sqlPath SQLパス sqlフォルダから指定する
@@ -97,7 +153,7 @@ public class SampleDao {
 
 		StringBuilder sql = new StringBuilder();
 		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(SampleDao.class.getClassLoader().getResourceAsStream("sql/match.sql")))) {
+				new InputStreamReader(SampleDao.class.getClassLoader().getResourceAsStream(sqlPath)))) {
 			String line;
 			while ((line = reader.readLine()) != null) {
 				sql.append(line).append("\n");

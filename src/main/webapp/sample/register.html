@@ -52,7 +52,7 @@
 			</div>
 
 			<!-- 送信ボタン -->
-			<button id="submit" type="submit" class="btn btn-primary">送信</button>
+			<button type="submit" class="btn btn-primary">送信</button>
 		</form>
 	</div>
 
@@ -68,10 +68,6 @@
 					    result: "",
 					    kifu: ""
                     },
-					blackPlayer: "",
-					whitePlayer: "",
-					result: "",
-					kifu: "",
 					errors: {
 						blackPlayer: "",
 						whitePlayer: "",
@@ -112,7 +108,7 @@
 
 					// エラーがなければ成功アラート
 					if (Object.values(this.errors).every((error) => !error)) {
-						alert("送信成功！");
+						//alert("送信成功！");
 					}
 
 					// ここに登録用ロジックを記載
@@ -130,12 +126,16 @@
 							return response.json();
 						})
 						.then(data => {
-							// 取得したJSONデータを画面に表示
-							document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                            if (data.status === 'success') {
+                                // success の場合に画面遷移
+                                window.location.href = 'get_json_sample.html'; // 遷移先URL
+                            } else {
+                                // errorの場合はエラーメッセージを表示する
+                            }
 						})
 						.catch(error => {
 							console.error('エラー:', error);
-							document.getElementById('result').textContent = 'エラーが発生しました';
+							//document.getElementById('result').textContent = 'エラーが発生しました';
 						});
 				},
 				// 全角チェック

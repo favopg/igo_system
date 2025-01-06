@@ -23,12 +23,10 @@ public class GetJsonSampleServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String path = req.getServletPath();
         System.out.println("リクエストパス" + path);
-                        
+        
+        // 対戦データ全取得
         JSONObject dbResponse = SampleDao.select("sql/match.sql");
         
-//        SampleService service = new SampleService();
-//        JSONObject dbResponse = service.getMathes();
-
         // JSONデータを返却
         PrintWriter out = res.getWriter();
         out.print(dbResponse.toString());
@@ -38,6 +36,7 @@ public class GetJsonSampleServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		// register.htmlから登録ボタン押下時に呼ばれる
 		
 		// JSONデータを読み取る
         StringBuilder jsonData = new StringBuilder();
@@ -54,6 +53,16 @@ public class GetJsonSampleServlet extends HttpServlet {
         FormData form = mapper.readValue(jsonData.toString(), FormData.class);
         
         System.out.println("json変換後データ" + form.getBlackPlayer());
+        
+        SampleService service = new SampleService();
+        service.register(form);
+                
+        JSONObject response = new JSONObject();
+        response.put("status", "success");
+        
+        PrintWriter out = res.getWriter();
+        out.print(response.toString());
+        out.flush();
 		
 	}
 }

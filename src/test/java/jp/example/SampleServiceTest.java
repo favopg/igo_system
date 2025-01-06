@@ -19,4 +19,17 @@ class SampleServiceTest {
         assertEquals(validRes.optString("blackPlayer"),"黒番が未入力です");
 
     }
+    
+    @Test
+    void testRegister() {
+    	SampleService service = new SampleService();
+        FormData input = new FormData();
+        input.setBlackPlayer("イッシー");
+        input.setWhitePlayer("木部夏生");
+        input.setResult("黒勝ち");
+        input.setKifu("nasi");
+
+        service.register(input);
+    	
+    }
 }
