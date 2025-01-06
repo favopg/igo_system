@@ -1,6 +1,9 @@
 package jp.example;
 
+import jakarta.validation.constraints.NotNull;
+
 public class FormData {
+	@NotNull(message = "黒番が未入力です")
 	private String blackPlayer = null;
 	private String whitePlayer = null;
 	private String result = null;
