@@ -26,15 +26,13 @@ public class SampleService {
 		
 		if (!violations.isEmpty()) {
 			
-			String errorMessage = violations.stream()
-                    .findFirst()
-                    .map(ConstraintViolation::getMessage)
-                    .orElse("No validation errors");
-			
-			// エラーレスポンスを返却
+			//  エラーレスポンスを設定
 			response.put("status", "error");
-			response.put("message", errorMessage);
 			
+			for (ConstraintViolation<FormData> errorInfo : violations) {
+				// チェックエラーのフィールド変数に対してエラーメッセージを設定
+				response.put(errorInfo.getPropertyPath().toString(), errorInfo.getMessage());
+			}
 		}
 		return response;
 		

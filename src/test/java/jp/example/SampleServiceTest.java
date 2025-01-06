@@ -16,7 +16,7 @@ class SampleServiceTest {
         JSONObject validRes = service.checkValidate(input);
 
         assertEquals(validRes.optString("status"), "error");
-        assertEquals(validRes.optString("message"), "黒番が未入力です");
+        assertEquals(validRes.optString("blackPlayer"),"黒番が未入力です");
 
     }
 }
