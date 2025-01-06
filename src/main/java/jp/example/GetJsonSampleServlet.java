@@ -55,11 +55,10 @@ public class GetJsonSampleServlet extends HttpServlet {
         System.out.println("json変換後データ" + form.getBlackPlayer());
         
         SampleService service = new SampleService();
-        service.register(form);
-                
-        JSONObject response = new JSONObject();
-        response.put("status", "success");
+        JSONObject response = service.register(form);
         
+        System.out.println(response.toString(2));
+                        
         PrintWriter out = res.getWriter();
         out.print(response.toString());
         out.flush();

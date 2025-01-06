@@ -17,11 +17,16 @@ public class SampleService {
 	public SampleService() {
 	}
 
-	public void register(FormData inputData) {
+	public JSONObject register(FormData inputData) {
+		
+		JSONObject response = new JSONObject();
+		
 		JSONObject rosterId = getRostersId(inputData);
-		if (rosterId.isEmpty()) {
+		if (rosterId.optString("status").equals("error")) {
 			// エラーレスポンスで返却する
-			return;
+			response.put("status", "error");
+			response.put("message", "黒番、白番のいずれかが登録されていないユーザです。ご確認ください");
+			return response;
 		}
 		
 		MatchesEntity entity = new MatchesEntity();
@@ -39,6 +44,9 @@ public class SampleService {
 		
 		// DB登録処理
 		SampleDao.insert("sql/match_insert.sql", convertInsertData(entity));
+		response.put("status", "success");
+		
+		return response;
 	}
 
 	public JSONObject checkValidate(FormData inputData) {

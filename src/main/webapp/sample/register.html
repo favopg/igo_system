@@ -4,15 +4,45 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>入力フォームチェック</title>
+	<title>対戦成績登録</title>
 	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+  	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"></script>
 </head>
+<style>
+	.custom-alert {
+		border-color: #0d6efd; /* 青枠 */
+		color: #dc3545; /* 赤字 */
+		background-color: #f8d7da; /* 薄い赤の背景 */
+	}
+</style>
 
 <body>
 	<div id="app" class="container mt-5">
-		<h1>入力フォーム</h1>
-		<h3></h3>
+		<h1>対戦成績登録</h1>
+		<div v-if="errors.message"  id="errorMessage" class="alert custom-alert" role="alert">
+            {{ errors.message }}
+        </div>
+
+		<!-- モーダル -->
+		<div class="modal fade" tabindex="-1" ref="myModal" id="exampleModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+				  		<h5 class="modal-title">登録完了</h5>
+				  		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+				  		<p>対戦成績一覧画面に遷移します。</p>
+					</div>
+					<div class="modal-footer">
+				  		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
+				  		<button type="button" class="btn btn-primary">当画面にとどまる</button>
+					</div>
+			  	</div>
+			</div>
+		</div>
 
 		<form @submit.prevent="validateForm" novalidate>
 			<!-- 黒番 -->
@@ -51,15 +81,39 @@
 				</div>
 			</div>
 
-			<!-- 送信ボタン -->
-			<button type="submit" class="btn btn-primary">送信</button>
+			<!-- 登録ボタン -->
+			<button type="submit" class="btn btn-primary">登録</button>
 		</form>
 	</div>
 
 	<!-- Vue & Script -->
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script>
-		const app = Vue.createApp({
+		const { createApp, ref } = Vue;
+		createApp({			
+			setup() {
+    			const myModal = ref(null); 
+				// モーダルを参照するためのref
+    			const openModal = () => {
+      				// Bootstrapモーダルインスタンスを作成
+					// モーダルを取得
+					const modalElement = document.getElementById('exampleModal');
+      				// Bootstrap の Modal クラスを初期化
+      				const modal = new bootstrap.Modal(modalElement);
+      				// モーダルを表示
+      				modal.show();
+    			};
+
+    			return {
+      				myModal,
+      				openModal,
+    			};
+
+				 // expose で関数を公開
+				 expose({
+					openModal
+        		});
+  			},
 			data() {
 				return {
                     input: {
@@ -73,6 +127,7 @@
 						whitePlayer: "",
 						result: "",
 						kifu: "",
+						message:""
 					},
 				};
 			},
@@ -84,6 +139,7 @@
 						whitePlayer: "",
 						result: "",
 						kifu: "",
+						message:"",
 					};
 
 					// 黒番：全角20文字チェック
@@ -131,6 +187,9 @@
                                 window.location.href = 'get_json_sample.html'; // 遷移先URL
                             } else {
                                 // errorの場合はエラーメッセージを表示する
+								this.errors.message = data.message;
+								console.log("返却後" + data.message);
+								this.openModal();
                             }
 						})
 						.catch(error => {
@@ -143,9 +202,8 @@
 					return /^[^\x00-\x7F]*$/.test(input);
 				},
 			},
-		});
-
-		app.mount("#app");
+		}).mount("#app");
+		
 	</script>
 </body>
 

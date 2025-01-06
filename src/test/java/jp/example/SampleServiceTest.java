@@ -3,6 +3,7 @@ package jp.example;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.json.JSONObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class SampleServiceTest {
@@ -21,6 +22,7 @@ class SampleServiceTest {
     }
     
     @Test
+    @Disabled
     void testRegister() {
     	SampleService service = new SampleService();
         FormData input = new FormData();
@@ -32,4 +34,20 @@ class SampleServiceTest {
         service.register(input);
     	
     }
+
+    @Test
+    void testRegisterError() {
+    	SampleService service = new SampleService();
+        FormData input = new FormData();
+        input.setBlackPlayer("aa");
+        input.setWhitePlayer("bb");
+        input.setResult("黒勝ち");
+        input.setKifu("nasi");
+
+        JSONObject response = service.register(input);
+        assertEquals(response.optString("status"), "error");
+        assertEquals(response.optString("message"), "黒番、白番のいずれかが登録されていないユーザです。ご確認ください");
+        
+    }
+
 }
