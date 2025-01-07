@@ -34,11 +34,12 @@
 				  		<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
 					<div class="modal-body">
-				  		<p>対戦成績一覧画面に遷移します。</p>
+				  		<p>対戦成績が登録完了しました。</p>
+						<p>対戦成績一覧画面に遷移します。</p>
 					</div>
 					<div class="modal-footer">
-				  		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>
-				  		<button type="button" class="btn btn-primary">当画面にとどまる</button>
+				  		<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">NO</button>
+				  		<button type="button" @click="getTrantition" class="btn btn-primary">OK</button>
 					</div>
 			  	</div>
 			</div>
@@ -89,13 +90,10 @@
 	<!-- Vue & Script -->
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script>
-		const { createApp, ref } = Vue;
+		const { createApp} = Vue;
 		createApp({			
 			setup() {
-    			const myModal = ref(null); 
-				// モーダルを参照するためのref
     			const openModal = () => {
-      				// Bootstrapモーダルインスタンスを作成
 					// モーダルを取得
 					const modalElement = document.getElementById('exampleModal');
       				// Bootstrap の Modal クラスを初期化
@@ -105,7 +103,6 @@
     			};
 
     			return {
-      				myModal,
       				openModal,
     			};
 
@@ -132,6 +129,11 @@
 				};
 			},
 			methods: {
+				getTrantition() {
+					// 画面遷移する
+					window.location.href = 'get_json_sample.html';
+				},
+				
 				validateForm() {
 					// リセット
 					this.errors = {
@@ -183,18 +185,15 @@
 						})
 						.then(data => {
                             if (data.status === 'success') {
-                                // success の場合に画面遷移
-                                window.location.href = 'get_json_sample.html'; // 遷移先URL
+                                // success の場合にモーダル画面を表示する
+								this.openModal();
                             } else {
                                 // errorの場合はエラーメッセージを表示する
 								this.errors.message = data.message;
-								console.log("返却後" + data.message);
-								this.openModal();
                             }
 						})
 						.catch(error => {
 							console.error('エラー:', error);
-							//document.getElementById('result').textContent = 'エラーが発生しました';
 						});
 				},
 				// 全角チェック
