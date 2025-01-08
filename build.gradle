@@ -1,6 +1,7 @@
 plugins {
 	id 'war'
 	id 'eclipse-wtp'
+	id "org.flywaydb.flyway" version "7.5.2"
 }
 
 java.sourceCompatibility = 21
@@ -30,7 +31,29 @@ dependencies {
 	implementation group: 'org.hibernate', name: 'hibernate-validator-cdi', version: '8.0.2.Final'
 	implementation group: 'org.hibernate.validator', name: 'hibernate-validator-modules', version: '8.0.2.Final', ext: 'pom'
 	
-	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
-	
-	
+	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'		
+}
+
+import java.util.Properties
+// プロパティファイルを読み込む関数
+def loadProperties(String filePath) {
+    def props = new Properties()
+    file(filePath).withInputStream {
+        props.load(it)
+    }
+    return props
+}
+
+// プロパティファイルのパスを指定
+def configFile = file('src/main/resources/config.properties')
+
+// プロパティのロード
+def config = loadProperties(configFile.absolutePath)
+
+
+flyway {
+    url = config['db.url']
+    user = config['db.user']
+    password = config['db.password']
+    locations = ['filesystem:src/main/resources/db/migration']
 }
