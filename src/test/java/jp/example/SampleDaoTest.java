@@ -15,6 +15,6 @@ class SampleDaoTest {
     			"InwhitePlayer", "木部夏生"
 
     			);
-    	System.out.println("検索後"+ SampleDao.selectRosterId("sql/rosters_select_name.sql", data).toString(2));    	
+    	System.out.println("検索後"+ SampleDao.selectFromBind("sql/rosters_select_name.sql", data).toString(2));    	
     }
 }

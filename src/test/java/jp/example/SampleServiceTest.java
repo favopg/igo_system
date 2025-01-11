@@ -49,5 +49,19 @@ class SampleServiceTest {
         assertEquals(response.optString("message"), "黒番、白番のいずれかが登録されていないユーザです。ご確認ください");
         
     }
+    
+    @Test
+    void testValidation2() {
+
+    	SampleService service = new SampleService();
+        FormData input = new FormData();
+
+        JSONObject response =  ValidateUtil.validate("テスト");
+        
+        assertTrue(response.isEmpty());
+
+
+    }
+
 
 }

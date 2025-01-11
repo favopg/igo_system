@@ -82,7 +82,7 @@ public class SampleDao {
 		return response;
 	}
 
-	public static JSONObject selectRosterId(String sqlFilePath, Map<String, Object> data) {
+	public static JSONObject selectFromBind(String sqlFilePath, Map<String, Object> data) {
 		JSONObject response = new JSONObject();
 
 		try (
@@ -101,9 +101,9 @@ public class SampleDao {
 				ResultSetMetaData metaData = resultSet.getMetaData();
 
 				if (!resultSet.next()) {
-					// 0件エラー
-					response.put("status", "error");
-					response.put("message", "登録されていないユーザを指定されています。");
+					// 0件の場合は空
+//					response.put("status", "error");
+//					response.put("message", "登録されていないユーザを指定されています。");
 					return response;
 				}
 

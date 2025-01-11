@@ -3,11 +3,6 @@ package jp.example;
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.json.JSONObject;
@@ -51,22 +46,22 @@ public class SampleService {
 
 	public JSONObject checkValidate(FormData inputData) {
 
-		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-
-		Set<ConstraintViolation<FormData>> violations = validator.validate(inputData);
-		JSONObject response = new JSONObject();
-
-		if (!violations.isEmpty()) {
-
-			//  エラーレスポンスを設定
-			response.put("status", "error");
-
-			for (ConstraintViolation<FormData> errorInfo : violations) {
-				// チェックエラーのフィールド変数に対してエラーメッセージを設定
-				response.put(errorInfo.getPropertyPath().toString(), errorInfo.getMessage());
-			}
-		}
-		return response;
+//		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+//
+//		Set<ConstraintViolation<FormData>> violations = validator.validate(inputData);
+//		JSONObject response = new JSONObject();
+//
+//		if (!violations.isEmpty()) {
+//
+//			//  エラーレスポンスを設定
+//			response.put("status", "error");
+//
+//			for (ConstraintViolation<FormData> errorInfo : violations) {
+//				// チェックエラーのフィールド変数に対してエラーメッセージを設定
+//				response.put(errorInfo.getPropertyPath().toString(), errorInfo.getMessage());
+//			}
+//		}
+		return ValidateUtil.validate(inputData);
 
 	}
 	
@@ -79,7 +74,7 @@ public class SampleService {
 		bindData.put("in1", input.getBlackPlayer());
 		bindData.put("in2", input.getWhitePlayer());
 		 			
-		return SampleDao.selectRosterId("sql/rosters_select_name.sql", bindData);
+		return SampleDao.selectFromBind("sql/rosters_select_name.sql", bindData);
 	}
 
 	/**
