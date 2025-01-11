@@ -94,7 +94,7 @@ public class LoginServlet extends HttpServlet {
         }
         
 		HttpSession session = req.getSession();
-		session.setMaxInactiveInterval(10);
+		session.setMaxInactiveInterval(600);
 		session.setAttribute("lastAccessTime", System.currentTimeMillis());
 		
 		System.out.println("アクセス日時" + System.currentTimeMillis());

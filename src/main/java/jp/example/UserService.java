@@ -50,7 +50,7 @@ public class UserService {
 		}
 		
 		// パスワード検証
-		boolean isPasswordMatch = BCrypt.checkpw(uf.getPassword(), response.optString("password_hash"));
+		boolean isPasswordMatch = BCrypt.checkpw(uf.getPassword(), response.optString("password"));
 		if (!isPasswordMatch) {
 			response.put("status", "error");
 			return response;
