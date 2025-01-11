@@ -1,11 +1,13 @@
 INSERT INTO users(
-    username,
-    password_hash,
+    name,
+    password,
     public_flag,
+    chess_ability,
     created_at,
     updated_at
 )
 VALUES(
+    ?,
     ?,
     ?,
     ?,

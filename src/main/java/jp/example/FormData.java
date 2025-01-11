@@ -1,5 +1,7 @@
 package jp.example;
 
+import java.sql.Date;
+
 import jakarta.validation.constraints.NotNull;
 
 public class FormData {
@@ -8,6 +10,8 @@ public class FormData {
 	private String whitePlayer = null;
 	private String result = null;
 	private String kifu = null;
+	private String comment = null;
+	private Date matchDate = null;
 	
 	public String getBlackPlayer() {
 		return blackPlayer;
@@ -33,6 +37,16 @@ public class FormData {
 	public void setKifu(String kifu) {
 		this.kifu = kifu;
 	}
-	
-
+	public String getComment() {
+		return comment;
+	}
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	public Date getMatchDate() {
+		return matchDate;
+	}
+	public void setMatchDate(Date matchDate) {
+		this.matchDate = matchDate;
+	}
 }

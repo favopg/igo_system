@@ -1,1 +1,1 @@
-select * from users where username = ?
+select * from users where name = ?

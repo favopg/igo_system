@@ -2,32 +2,23 @@ select
     id,
     (
         select
-            shops.name
+            concat(users.name, users.chess_ability)
         from
-            shops
+            users
         where
-            shops.id = matches.shop_id
-    ) as shops_name,
-    (
-        select
-            concat(rosters.name, rosters.chess_ability)
-        from
-            rosters
-        where
-            rosters.id = matches.black_id
+            users.id = matches.black_id
     ) as black_name,
     (
         select
-            concat(rosters.name, rosters.chess_ability)
+            concat(users.name, users.chess_ability)
         from
-            rosters
+            users
         where
-            rosters.id = matches.white_id
+            users.id = matches.white_id
     ) as white_name,
     result,
     result_link,
+    comment,
     match_at
 from
     matches
-where
-    matches.shop_id = 1

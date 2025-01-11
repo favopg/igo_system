@@ -10,6 +10,7 @@ public class UserForm {
 	private String password = null;
 	
 	private boolean isPublic = false;
+	private String chessAbility = null;
 	
 	public String getName() {
 		return name;
@@ -30,4 +31,11 @@ public class UserForm {
 	public void setPublic(boolean isPublic) {
 		this.isPublic = isPublic;
 	}
+	public String getChessAbility() {
+		return chessAbility;
+	}
+	public void setChessAbility(String chessAbility) {
+		this.chessAbility = chessAbility;
+	}
+
 }

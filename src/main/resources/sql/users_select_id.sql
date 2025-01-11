@@ -3,19 +3,19 @@ select
         select
             id
         from
-            rosters r1
+            users u1
         where
-            r1.name = ?
+            u1.name = ?
     ) as black_player_id,
     (
         select
             id
         from
-            rosters r2
+            users u2
         where
-            r2.name = ?
+            u2.name = ?
     ) as white_player_id
 from
-    rosters
+    users
 where
     name in(?, ?)

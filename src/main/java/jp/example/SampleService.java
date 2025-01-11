@@ -16,7 +16,7 @@ public class SampleService {
 		
 		JSONObject response = new JSONObject();
 		
-		JSONObject rosterId = getRostersId(inputData);
+		JSONObject rosterId = getUserId(inputData);
 		if (rosterId.optString("status").equals("error")) {
 			// エラーレスポンスで返却する
 			response.put("status", "error");
@@ -65,7 +65,7 @@ public class SampleService {
 
 	}
 	
-	private JSONObject getRostersId(FormData input) {
+	private JSONObject getUserId(FormData input) {
 		
 		Map<String, Object> bindData = new LinkedHashMap<String, Object>();
 
@@ -74,7 +74,7 @@ public class SampleService {
 		bindData.put("in1", input.getBlackPlayer());
 		bindData.put("in2", input.getWhitePlayer());
 		 			
-		return SampleDao.selectFromBind("sql/rosters_select_name.sql", bindData);
+		return SampleDao.selectFromBind("sql/users_select_id.sql", bindData);
 	}
 
 	/**
@@ -91,7 +91,9 @@ public class SampleService {
 		bindData.put("whitePlayerId", entity.getWhitePlayerId());
 		bindData.put("result", entity.getResult());
 		bindData.put("kifu", entity.getKifu());
-
+		bindData.put("comment", entity.getComment());
+		bindData.put("match_at", entity.getMatchDate());
+		
 		return bindData;
 	}
 }
