@@ -14,6 +14,12 @@
 ### 使用言語やフレームワーク
 フロントエンド：Bootstrap Vue.js  
 バックエンド：Java
+データベースアクセス：Domaかも
 
 ### 使用データベース
 MySQL
+
+### 環境構築手順
+1. developブランチをクローン
+2. src/main/resources/config.propertiesのDB接続情報をローカル用に修正する
+3. Tomcat設定して起動すれば動く
