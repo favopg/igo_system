@@ -4,7 +4,11 @@ plugins {
 	id "org.flywaydb.flyway" version "7.5.2"
 }
 
-java.sourceCompatibility = 21
+war {
+	archiveBaseName = 'igo-system'
+}
+
+java.sourceCompatibility = 17
 eclipse.wtp.facet.facet name: 'jst.web', version: '6.0'
 repositories.mavenCentral()
 
