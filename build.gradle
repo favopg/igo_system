@@ -2,13 +2,15 @@ plugins {
 	id 'war'
 	id 'eclipse-wtp'
 	id "org.flywaydb.flyway" version "7.5.2"
+	id 'org.jetbrains.kotlin.jvm' version '1.9.10'
+
 }
 
 war {
 	archiveBaseName = 'igo-system'
 }
 
-java.sourceCompatibility = 17
+java.sourceCompatibility = 18
 eclipse.wtp.facet.facet name: 'jst.web', version: '6.0'
 repositories.mavenCentral()
 
@@ -19,7 +21,6 @@ dependencies {
 	testing.suites.test.useJUnitJupiter('5.+')
 	configurations { testImplementation.extendsFrom compileOnly }
 	
-	testImplementation("org.eclipse.jetty:jetty-server:11.0.15")
 	testImplementation("org.eclipse.jetty:jetty-servlet:11.0.15")
 	implementation("org.json:json:20240303")
 	implementation group: 'com.microsoft.playwright', name: 'playwright', version: '1.48.0'
@@ -34,8 +35,9 @@ dependencies {
   	implementation group: 'org.glassfish.expressly', name: 'expressly', version: '5.0.0'
 	implementation group: 'org.hibernate', name: 'hibernate-validator-cdi', version: '8.0.2.Final'
 	implementation group: 'org.hibernate.validator', name: 'hibernate-validator-modules', version: '8.0.2.Final', ext: 'pom'
-	
-	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'		
+	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
+	// kotlinテスト用
+	testImplementation 'org.jetbrains.kotlin:kotlin-test'
 }
 
 import java.util.Properties
@@ -60,4 +62,9 @@ flyway {
     user = config['db.user']
     password = config['db.password']
     locations = ['filesystem:src/main/resources/db/migration']
+}
+
+// kotlin用
+test {
+	useJUnitPlatform()
 }

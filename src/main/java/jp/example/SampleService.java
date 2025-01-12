@@ -45,24 +45,7 @@ public class SampleService {
 	}
 
 	public JSONObject checkValidate(FormData inputData) {
-
-//		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-//
-//		Set<ConstraintViolation<FormData>> violations = validator.validate(inputData);
-//		JSONObject response = new JSONObject();
-//
-//		if (!violations.isEmpty()) {
-//
-//			//  エラーレスポンスを設定
-//			response.put("status", "error");
-//
-//			for (ConstraintViolation<FormData> errorInfo : violations) {
-//				// チェックエラーのフィールド変数に対してエラーメッセージを設定
-//				response.put(errorInfo.getPropertyPath().toString(), errorInfo.getMessage());
-//			}
-//		}
 		return ValidateUtil.validate(inputData);
-
 	}
 	
 	private JSONObject getUserId(FormData input) {
