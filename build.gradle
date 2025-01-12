@@ -3,7 +3,7 @@ plugins {
 	id 'eclipse-wtp'
 	id "org.flywaydb.flyway" version "7.5.2"
 	id 'org.jetbrains.kotlin.jvm' version '1.9.10'
-
+	id 'org.domaframework.doma.compile' version '2.0.0'
 }
 
 war {
@@ -38,6 +38,10 @@ dependencies {
 	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
 	// kotlinテスト用
 	testImplementation 'org.jetbrains.kotlin:kotlin-test'
+	// domaセット
+	implementation 'org.seasar.doma:doma-core:3.0.1'
+	annotationProcessor 'org.seasar.doma:doma-processor:3.0.1'
+	implementation 'org.seasar.doma:doma-slf4j:3.0.1'
 }
 
 import java.util.Properties
@@ -67,4 +71,19 @@ flyway {
 // kotlin用
 test {
 	useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile) {
+	options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src/main/java', 'src/main/kotlin']
+		}
+		resources {
+			srcDirs = ['src/main/resources']
+		}
+	}
 }

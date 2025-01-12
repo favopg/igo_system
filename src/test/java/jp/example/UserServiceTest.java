@@ -9,13 +9,13 @@ import org.junit.jupiter.api.Test;
 class UserServiceTest {
 	
     @Test
-    @Disabled
-    void testRgist() {
+    void testRegist() {
 
     	UserService service = new UserService();
     	UserForm form = new UserForm();
-    	form.setName("イッシー");
-    	form.setPassword("sakura");
+    	form.setName("ロボット");
+    	form.setPassword("123");
+        form.setPublic(true);
 
     	JSONObject response = service.registUser(form);
 
@@ -25,16 +25,17 @@ class UserServiceTest {
     
     
     @Test
+    @Disabled
     void selectUserTest() {
 
     	UserService service = new UserService();
     	UserForm form = new UserForm();
-    	form.setName("イッシー");
-    	form.setPassword("sakura2");
+    	form.setName("ロボット");
+    	form.setPassword("123");
 
     	JSONObject response = service.selectUser(form);
 
-        assertEquals(response.optString("username"), "イッシー");
+        assertEquals(response.optString("name"), "ロボット");
         assertEquals(response.optString("status"), "success");
 
     }

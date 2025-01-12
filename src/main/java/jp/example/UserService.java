@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
+import org.seasar.doma.jdbc.Config;
 
 public class UserService {
 
@@ -87,4 +88,12 @@ public class UserService {
         }
 		return bindData;
 	}
+
+	public void test() {
+		Config config = new AppConfig();
+		UserDao dao = new UserDaoImpl(config);
+		dao.selectFindByName("イッシー");
+	}
+
+
 }
