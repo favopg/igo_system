@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author イッシー
  * @version 1.0
- * @see LoginServlet
+ * @see GetJsonSampleServlet
  * @since 1.0
  */
 @Dao

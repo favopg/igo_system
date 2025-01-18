@@ -10,12 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.seasar.doma.jdbc.tx.TransactionManager;
 
-public class SampleService {
+public class MatchService {
 
 	private TransactionManager transaction = null;
 	private MatchDao dao = null;
 
-	public SampleService() {
+	public MatchService() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
@@ -30,6 +30,17 @@ public class SampleService {
 		List<Map<String, Object>> matchMapList = transaction.required(() -> {
 			return dao.selectFindByUserId(userId);
 		});
+
+		// 検索結果から黒の勝利数を数える
+		List<Map<String, Object>> blackVictoryList = matchMapList.stream()
+				.filter(row -> row.get("result") != null && row.get("result").toString().contains("黒"))
+				.toList();
+
+		// 検索結果から白の勝利数を数える
+		List<Map<String, Object>> whiteVictoryList = matchMapList.stream()
+				.filter(row -> row.get("result") != null && row.get("result").toString().contains("白"))
+				.toList();
+
 		JSONObject response = new JSONObject();
 		JSONArray jsonArray = new JSONArray();
 		for (Map<String, Object> map : matchMapList) {
@@ -38,6 +49,8 @@ public class SampleService {
 		}
 
 		response.put("records", jsonArray);
+		response.put("black_victory_cnt", blackVictoryList.size() + "勝");
+		response.put("white_victory_cnt", whiteVictoryList.size() + "勝");
 		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
 		return response;
 	}
@@ -107,7 +120,7 @@ public class SampleService {
 		bindData.put("kifu", entity.getKifu());
 		bindData.put("comment", entity.getComment());
 		bindData.put("match_at", entity.getMatchDate());
-		
+
 		return bindData;
 	}
 }

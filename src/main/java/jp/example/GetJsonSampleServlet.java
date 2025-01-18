@@ -33,7 +33,7 @@ public class GetJsonSampleServlet extends HttpServlet {
 
         System.out.println("セッションの値" + userId);
         // 対戦データ全取得
-        SampleService service = new SampleService();
+        MatchService service = new MatchService();
         JSONObject response = service.getMatchList(userId);
 
         // JSONデータを返却
@@ -62,8 +62,8 @@ public class GetJsonSampleServlet extends HttpServlet {
         FormData form = mapper.readValue(jsonData.toString(), FormData.class);
         
         System.out.println("json変換後データ" + form.getBlackPlayer());
-        
-        SampleService service = new SampleService();
+
+        MatchService service = new MatchService();
         JSONObject response = service.register(form);
         
         System.out.println(response.toString(2));
