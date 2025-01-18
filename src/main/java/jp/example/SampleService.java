@@ -2,14 +2,44 @@ package jp.example;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.seasar.doma.jdbc.tx.TransactionManager;
 
 public class SampleService {
 
+	private TransactionManager transaction = null;
+	private MatchDao dao = null;
+
 	public SampleService() {
+		try {
+			Class.forName("com.mysql.cj.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		AppConfig config = new AppConfig();
+		transaction = config.getTransactionManager();
+		dao = new MatchDaoImpl(config);
+	}
+
+	public JSONObject getMatchList(int userId) {
+		List<Map<String, Object>> matchMapList = transaction.required(() -> {
+			return dao.selectFindByUserId(userId);
+		});
+		JSONObject response = new JSONObject();
+		JSONArray jsonArray = new JSONArray();
+		for (Map<String, Object> map : matchMapList) {
+			JSONObject json = new JSONObject(map);
+			jsonArray.put(json);
+		}
+
+		response.put("records", jsonArray);
+		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
+		return response;
 	}
 
 	public JSONObject register(FormData inputData) {
@@ -49,7 +79,8 @@ public class SampleService {
 	}
 	
 	private JSONObject getUserId(FormData input) {
-		
+
+
 		Map<String, Object> bindData = new LinkedHashMap<String, Object>();
 
 		bindData.put("blackPlayer", input.getBlackPlayer());
@@ -63,7 +94,7 @@ public class SampleService {
 	/**
 	 * formから登録用に変換する
 	 * 設定する際にSQLのバインド変数の順番と合せること
-	 * @param input formデータ
+	 * @param entity 登録データ
 	 * @return 登録用データ
 	 */
 	public Map<String, Object> convertInsertData(MatchesEntity entity) {

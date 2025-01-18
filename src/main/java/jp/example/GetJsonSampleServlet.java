@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,13 +24,21 @@ public class GetJsonSampleServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
         String path = req.getServletPath();
         System.out.println("リクエストパス" + path);
-        
+        int userId = 0;
+
+        HttpSession session = req.getSession(false);
+        if(req.getSession() != null) {
+           userId = (int)session.getAttribute("userId");
+        }
+
+        System.out.println("セッションの値" + userId);
         // 対戦データ全取得
-        JSONObject dbResponse = SampleDao.select("sql/match.sql");
-        
+        SampleService service = new SampleService();
+        JSONObject response = service.getMatchList(userId);
+
         // JSONデータを返却
         PrintWriter out = res.getWriter();
-        out.print(dbResponse.toString());
+        out.print(response.toString());
         out.flush();
 						
 	}

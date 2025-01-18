@@ -103,7 +103,10 @@ public class UserService {
 			return response;
 		}
 
+		response = new JSONObject(userMap);
 		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
+
+		System.out.println("検索結果" + response.toString());
 		
 		return response;
 	}
