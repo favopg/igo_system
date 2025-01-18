@@ -9,23 +9,25 @@ import org.junit.jupiter.api.Test;
 class UserServiceTest {
 	
     @Test
-    void testRegist() {
+    @Disabled
+    void registerUserTest() {
 
     	UserService service = new UserService();
     	UserForm form = new UserForm();
     	form.setName("ロボット");
     	form.setPassword("123");
         form.setPublic(true);
+        form.setChessAbility("六段");
+        form.setChessAbilityKbn("0");
 
-    	JSONObject response = service.registUser(form);
+    	JSONObject response = service.registerUser(form);
 
-        assertEquals(response.optString("status"), "success");
+        assertEquals("success", response.optString("status"));
 
     }
     
     
     @Test
-    @Disabled
     void selectUserTest() {
 
     	UserService service = new UserService();

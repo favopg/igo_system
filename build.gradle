@@ -87,3 +87,16 @@ sourceSets {
 		}
 	}
 }
+
+tasks.javadoc {
+	options {
+		encoding = 'UTF-8' // Javadocの文字エンコーディング
+		charSet = 'UTF-8' // HTMLファイルの文字セット
+		docEncoding = 'UTF-8' // ドキュメントのエンコーディング
+		options.addStringOption('Xdoclint:none', '-quiet') // 警告を抑制する場合
+		options.locale = 'ja'
+		author = true // 作成者情報を表示
+		version = true // バージョン情報を表示
+		links("https://docs.oracle.com/en/java/javase/11/docs/api/") // リンク先のAPIドキュメント
+	}
+}
