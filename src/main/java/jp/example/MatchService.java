@@ -1,7 +1,6 @@
 package jp.example;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +9,21 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.seasar.doma.jdbc.tx.TransactionManager;
 
+/**
+ * 対戦情報を操作するサービスクラス
+ * @author イッシー
+ * @version 1.0
+ * @since 1.0
+ * @see MatchServlet
+ */
 public class MatchService {
 
 	private TransactionManager transaction = null;
 	private MatchDao dao = null;
 
+	/**
+	 * デフォルトコンストラクタ
+	 */
 	public MatchService() {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -26,19 +35,30 @@ public class MatchService {
 		dao = new MatchDaoImpl(config);
 	}
 
+	/**
+	 * ユーザIDを使用し、ログインユーザの対戦一覧と公開設定している他のユーザの対戦情報すべてを取得します。<br>
+	 * {@link MatchDao#selectFindByUserId(int)}
+	 * @param userId セッション保持しているユーザID
+	 * @return 対戦情報一覧
+	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
+	 */
 	public JSONObject getMatchList(int userId) {
 		List<Map<String, Object>> matchMapList = transaction.required(() -> {
 			return dao.selectFindByUserId(userId);
 		});
 
-		// 検索結果から黒の勝利数を数える
+		// 検索結果から黒の勝利数を集計
 		List<Map<String, Object>> blackVictoryList = matchMapList.stream()
-				.filter(row -> row.get("result") != null && row.get("result").toString().contains("黒"))
+				.filter(row -> row.get("result") != null &&
+						row.get("result").toString().contains("黒") &&
+						Integer.parseInt(row.get("created_user_id").toString()) == userId)
 				.toList();
 
 		// 検索結果から白の勝利数を数える
 		List<Map<String, Object>> whiteVictoryList = matchMapList.stream()
-				.filter(row -> row.get("result") != null && row.get("result").toString().contains("白"))
+				.filter(row -> row.get("result") != null &&
+						row.get("result").toString().contains("白") &&
+						Integer.parseInt(row.get("created_user_id").toString()) == userId)
 				.toList();
 
 		JSONObject response = new JSONObject();
@@ -55,72 +75,41 @@ public class MatchService {
 		return response;
 	}
 
-	public JSONObject register(FormData inputData) {
+	/**
+	 * 入力情報から、対戦テーブルに対戦情報を登録します。<br>
+	 * {@link MatchDao#insertMatch(MatchEntity)}
+	 * @param inputData 入力された対戦情報
+	 * @param userName セッション情報のユーザ名
+	 * @return APIレスポンスを詰めた　JSONObject
+	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
+	 */
+	public JSONObject register(MatchForm inputData, String userName) {
 		
 		JSONObject response = new JSONObject();
-		
-		JSONObject rosterId = getUserId(inputData);
-		if (rosterId.optString("status").equals("error")) {
-			// エラーレスポンスで返却する
-			response.put("status", "error");
+
+		// 黒番、白番のどちらかにログインユーザが含まれているかチェックする
+		if (!inputData.getBlackName().equals(userName) && !inputData.getWhiteName().equals(userName) ) {
+			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
 			response.put("message", "黒番、白番のいずれかが登録されていないユーザです。ご確認ください");
 			return response;
 		}
-		
-		MatchesEntity entity = new MatchesEntity();
-		
+
+		// 入力値をエンティティに変換
+		MatchEntity entity = new MatchEntity();
 		try {
 			BeanUtils.copyProperties(entity, inputData);
 		} catch (IllegalAccessException | InvocationTargetException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
-		System.out.println("結果" + entity.getResult());
-		System.out.println("棋譜" + entity.getKifu());
-		
-		entity.setBlackPlayerId(rosterId.optInt("black_player_id"));
-		entity.setWhitePlayerId(rosterId.optInt("white_player_id"));
-		
-		// DB登録処理
-		SampleDao.insert("sql/match_insert.sql", convertInsertData(entity));
-		response.put("status", "success");
-		
+
+		// 登録処理
+		if (dao.insertMatch(entity) != 1) {
+			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+			response.put("message", "対戦成績登録処理で失敗しました");
+			return response;
+		}
+
+		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
 		return response;
-	}
-
-	public JSONObject checkValidate(FormData inputData) {
-		return ValidateUtil.validate(inputData);
-	}
-	
-	private JSONObject getUserId(FormData input) {
-
-
-		Map<String, Object> bindData = new LinkedHashMap<String, Object>();
-
-		bindData.put("blackPlayer", input.getBlackPlayer());
-		bindData.put("whitePlayer", input.getWhitePlayer());
-		bindData.put("in1", input.getBlackPlayer());
-		bindData.put("in2", input.getWhitePlayer());
-		 			
-		return SampleDao.selectFromBind("sql/users_select_id.sql", bindData);
-	}
-
-	/**
-	 * formから登録用に変換する
-	 * 設定する際にSQLのバインド変数の順番と合せること
-	 * @param entity 登録データ
-	 * @return 登録用データ
-	 */
-	public Map<String, Object> convertInsertData(MatchesEntity entity) {
-
-		Map<String, Object> bindData = new LinkedHashMap<String, Object>();
-
-		bindData.put("blackPlayerId", entity.getBlackPlayerId());
-		bindData.put("whitePlayerId", entity.getWhitePlayerId());
-		bindData.put("result", entity.getResult());
-		bindData.put("kifu", entity.getKifu());
-		bindData.put("comment", entity.getComment());
-		bindData.put("match_at", entity.getMatchDate());
-
-		return bindData;
 	}
 }

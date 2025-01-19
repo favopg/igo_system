@@ -37,8 +37,8 @@ class UserServiceTest {
 
     	JSONObject response = service.selectUser(form);
 
-        assertEquals(response.optString("name"), "ロボット");
-        assertEquals(response.optString("status"), "success");
+        assertEquals("ロボット", response.optString("name"));
+        assertEquals("success", response.optString("status"));
 
     }
 

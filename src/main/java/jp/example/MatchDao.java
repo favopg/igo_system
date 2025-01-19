@@ -1,6 +1,7 @@
 package jp.example;
 
 import org.seasar.doma.Dao;
+import org.seasar.doma.Insert;
 import org.seasar.doma.Select;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Map;
  *
  * @author イッシー
  * @version 1.0
- * @see GetJsonSampleServlet
+ * @see MatchService
  * @since 1.0
  */
 @Dao
@@ -20,4 +21,7 @@ public interface MatchDao {
 
     @Select
     public List<Map<String, Object>> selectFindByUserId(int userId);
+
+    @Insert
+    public int insertMatch(MatchEntity entity);
 }

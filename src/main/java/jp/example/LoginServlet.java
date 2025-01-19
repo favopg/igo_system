@@ -97,6 +97,7 @@ public class LoginServlet extends HttpServlet {
 		session.setMaxInactiveInterval(600);
 		session.setAttribute("lastAccessTime", System.currentTimeMillis());
 		session.setAttribute("userId", response.optInt("id"));
+		session.setAttribute("userName", response.optInt("name"));
 		System.out.println("アクセス日時" + System.currentTimeMillis());
 		System.out.println("セッションID" + response.optInt("id"));
 		// JSONデータを返却

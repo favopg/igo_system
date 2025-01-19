@@ -6,6 +6,7 @@ import org.seasar.doma.*;
 @Table(name = "users")
 public class UserEntity {
 
+    @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id = 0;
