@@ -21,22 +21,21 @@ public class MatchServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 
-        req.setCharacterEncoding("UTF-8");
+        res.setContentType("text/html; charset=UTF-8");
+        res.setCharacterEncoding("UTF-8");
+
         String path = req.getServletPath();
         System.out.println("リクエストパス" + path);
-        int userId = 0;
-        String userName = "";
 
         HttpSession session = req.getSession(false);
+        SessionInfo sessionInfo = new SessionInfo();
         if (req.getSession() != null) {
-            userId = (int) session.getAttribute("userId");
-            userName = session.getAttribute("userName").toString();
+            sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
         }
 
-        System.out.println("セッションの値" + userId);
         // 対戦データ全取得
         MatchService service = new MatchService();
-        JSONObject response = service.getMatchList(userId);
+        JSONObject response = service.getMatchList(sessionInfo.getUserId());
 
         // JSONデータを返却
         PrintWriter out = res.getWriter();
@@ -48,7 +47,8 @@ public class MatchServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // register.htmlから登録ボタン押下時に呼ばれる
-
+        res.setContentType("text/html; charset=UTF-8");
+        res.setCharacterEncoding("UTF-8");
         // JSONデータを読み取る
         StringBuilder jsonData = new StringBuilder();
         try (BufferedReader reader = req.getReader()) {
@@ -62,11 +62,15 @@ public class MatchServlet extends HttpServlet {
         ObjectMapper mapper = new ObjectMapper();
         MatchForm form = mapper.readValue(jsonData.toString(), MatchForm.class);
 
+        System.out.println("変換確認: " + form.toString());
+
         // セッション情報が取れない場合はAPIえらーとして返却する
         HttpSession session = req.getSession(false);
         JSONObject response = new JSONObject();
         if (req.getSession() == null) {
             response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+            response.put("message", "セッション切れです");
+
             PrintWriter out = res.getWriter();
             out.print(response.toString());
             out.flush();
@@ -82,9 +86,11 @@ public class MatchServlet extends HttpServlet {
             return;
         }
 
+        SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+
         String userName = session.getAttribute("userName").toString();
         MatchService service = new MatchService();
-        response = service.register(form, userName);
+        response = service.register(form, sessionInfo);
 
         PrintWriter out = res.getWriter();
         out.print(response.toString());

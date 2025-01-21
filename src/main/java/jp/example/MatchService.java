@@ -79,13 +79,15 @@ public class MatchService {
 	 * 入力情報から、対戦テーブルに対戦情報を登録します。<br>
 	 * {@link MatchDao#insertMatch(MatchEntity)}
 	 * @param inputData 入力された対戦情報
-	 * @param userName セッション情報のユーザ名
+	 * @param sessionInfo セッション情報のユーザ名
 	 * @return APIレスポンスを詰めた　JSONObject
 	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
 	 */
-	public JSONObject register(MatchForm inputData, String userName) {
-		
+	public JSONObject register(MatchForm inputData, SessionInfo sessionInfo) {
+
 		JSONObject response = new JSONObject();
+
+		String userName = sessionInfo.getName();
 
 		// 黒番、白番のどちらかにログインユーザが含まれているかチェックする
 		if (!inputData.getBlackName().equals(userName) && !inputData.getWhiteName().equals(userName) ) {
@@ -101,6 +103,8 @@ public class MatchService {
 		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
+		// 作成ユーザIDにログインユーザIDを設定
+		entity.setCreatedUserId(sessionInfo.getUserId());
 
 		// 登録処理
 		if (dao.insertMatch(entity) != 1) {

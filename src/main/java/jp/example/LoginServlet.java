@@ -25,7 +25,9 @@ public class LoginServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-		System.out.println();
+		res.setContentType("text/html; charset=UTF-8");
+		res.setCharacterEncoding("UTF-8");
+
 		String endpoint = req.getServletPath();
 		
 		switch(endpoint) {
@@ -71,6 +73,9 @@ public class LoginServlet extends HttpServlet {
 	*/
 
 	private void login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		res.setContentType("text/html; charset=UTF-8");
+		res.setCharacterEncoding("UTF-8");
+
 		// JSONデータを読み取る
         StringBuilder jsonData = new StringBuilder();
 		PrintWriter out = res.getWriter();
@@ -92,14 +97,14 @@ public class LoginServlet extends HttpServlet {
     		out.flush();
     		return;
         }
+		SessionInfo sessionInfo = new SessionInfo();
+		sessionInfo.setUserId(response.optInt("id"));
+		sessionInfo.setName(response.optString("name"));
 
 		HttpSession session = req.getSession();
 		session.setMaxInactiveInterval(600);
-		session.setAttribute("lastAccessTime", System.currentTimeMillis());
-		session.setAttribute("userId", response.optInt("id"));
-		session.setAttribute("userName", response.optInt("name"));
-		System.out.println("アクセス日時" + System.currentTimeMillis());
-		System.out.println("セッションID" + response.optInt("id"));
+		session.setAttribute("sessionInfo", sessionInfo);
+
 		// JSONデータを返却
 		out.print(response.toString());
 		out.flush();

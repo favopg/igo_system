@@ -22,7 +22,11 @@ class MatchServiceTest {
         input.setComment("良いコメント");
         input.setCreatedUserId(14);
 
-        JSONObject response = service.register(input, "ロボット");
+        SessionInfo sessionInfo = new SessionInfo();
+        sessionInfo.setName("ロボット");
+        sessionInfo.setUserId(14);
+
+        JSONObject response = service.register(input, sessionInfo);
         assertEquals("success", response.optString("status"));
     }
 
@@ -32,8 +36,11 @@ class MatchServiceTest {
         MatchForm input = new MatchForm();
         input.setBlackName("aa");
         input.setWhiteName("bb");
+        SessionInfo sessionInfo = new SessionInfo();
+        sessionInfo.setName("イッシー");
+        sessionInfo.setUserId(1);
 
-        JSONObject response = service.register(input, "イッシー");
+        JSONObject response = service.register(input, sessionInfo);
         assertEquals("error", response.optString("status"));
         assertEquals("黒番、白番のいずれかが登録されていないユーザです。ご確認ください", response.optString("message"));
         
