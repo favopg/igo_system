@@ -69,8 +69,8 @@ public class MatchService {
 		}
 
 		response.put("records", jsonArray);
-		response.put("black_victory_cnt", blackVictoryList.size() + "勝");
-		response.put("white_victory_cnt", whiteVictoryList.size() + "勝");
+		response.put("black_victory_cnt", blackVictoryList.size());
+		response.put("white_victory_cnt", whiteVictoryList.size());
 		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
 		return response;
 	}
