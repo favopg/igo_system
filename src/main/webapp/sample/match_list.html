@@ -49,7 +49,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
+                        <a class="nav-link text-white" href="register.html">
                             <i class="bi bi-plus-square me-2"></i>
                             対戦登録
                         </a>
@@ -157,24 +157,9 @@
 
     createApp({
         setup() {
-            const games = ref([
-                { id: 1, blackPlayer: "張栩", whitePlayer: "井山裕太", result: "黒勝", kifu: "#", date: "2023-05-01", comment: "激戦でした" },
-                { id: 2, blackPlayer: "芝野虎丸", whitePlayer: "一力遼", result: "白勝", kifu: "#", date: "2023-05-03", comment: "大逆転" },
-                { id: 3, blackPlayer: "許家元", whitePlayer: "柯潔", result: "黒勝", kifu: "#", date: "2023-05-05", comment: "接戦" },
-                { id: 4, blackPlayer: "余正麒", whitePlayer: "朴廷桓", result: "白勝", kifu: "#", date: "2023-05-07", comment: "圧倒的" },
-                { id: 5, blackPlayer: "申真谞", whitePlayer: "李世石", result: "黒勝", kifu: "#", date: "2023-05-09", comment: "名勝負" },
-                { id: 6, blackPlayer: "金志錫", whitePlayer: "安国鉉", result: "白勝", kifu: "#", date: "2023-05-11", comment: "大混戦" },
-                { id: 7, blackPlayer: "羽根直樹", whitePlayer: "山下敬吾", result: "黒勝", kifu: "#", date: "2023-05-13", comment: "好形勝負" },
-                { id: 8, blackPlayer: "村川大介", whitePlayer: "張豪", result: "白勝", kifu: "#", date: "2023-05-15", comment: "読みの深さ" },
-                { id: 9, blackPlayer: "謝依旻", whitePlayer: "藤沢里菜", result: "黒勝", kifu: "#", date: "2023-05-17", comment: "女流対決" },
-                { id: 10, blackPlayer: "芝野虎丸", whitePlayer: "井山裕太", result: "白勝", kifu: "#", date: "2023-05-19", comment: "タイトル戦" },
-                { id: 11, blackPlayer: "張栩", whitePlayer: "井山裕太", result: "黒勝", kifu: "#", date: "2023-05-21", comment: "接戦でした" },
-                { id: 12, blackPlayer: "芝野虎丸", whitePlayer: "一力遼", result: "白勝", kifu: "#", date: "2023-05-23", comment: "大逆転劇" },
-            ])
             var matches = ref([
                 {records:[]}
             ])
-
             var apiResponse = ref(0)
 
             /**
@@ -204,7 +189,6 @@
              */
 
             return {
-                games,
                 matches,
                 apiResponse
                 /**

@@ -88,7 +88,6 @@ public class MatchServlet extends HttpServlet {
 
         SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
 
-        String userName = session.getAttribute("userName").toString();
         MatchService service = new MatchService();
         response = service.register(form, sessionInfo);
 
