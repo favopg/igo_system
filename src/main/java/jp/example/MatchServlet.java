@@ -14,34 +14,53 @@ import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet("/sample/igo_system")
 public class MatchServlet extends HttpServlet {
 
+    private static final Logger logger = LoggerFactory.getLogger(MatchServlet.class);
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) {
 
-        res.setContentType("text/html; charset=UTF-8");
-        res.setCharacterEncoding("UTF-8");
+        try {
+            res.setContentType("text/html; charset=UTF-8");
+            res.setCharacterEncoding("UTF-8");
 
-        String path = req.getServletPath();
-        System.out.println("リクエストパス" + path);
+            String path = req.getServletPath();
+            logger.debug("リクエストパス{}", path);
 
-        HttpSession session = req.getSession(false);
-        SessionInfo sessionInfo = new SessionInfo();
-        if (req.getSession() != null) {
-            sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+            // セッション情報取得
+            HttpSession session = req.getSession(false);
+            if (session == null) {
+                throw new RuntimeException("セッション情報取得でエラー発生");
+            }
+
+            SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+            logger.debug("セッション情報{}", sessionInfo.toString());
+
+            // 対戦データ全取得
+            MatchService service = new MatchService();
+            JSONObject response = service.getMatchList(sessionInfo.getUserId());
+
+            logger.debug("対戦一覧結果一覧：{}", response.toString());
+
+            // JSONデータを返却
+            PrintWriter out = res.getWriter();
+            out.print(response.toString());
+            out.flush();
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            try {
+                execError(res);
+            } catch (IOException ex) {
+                logger.error("ここでエラー起きたらもうおしまいだよ", ex);
+                throw new RuntimeException(ex);
+            }
         }
-
-        // 対戦データ全取得
-        MatchService service = new MatchService();
-        JSONObject response = service.getMatchList(sessionInfo.getUserId());
-
-        // JSONデータを返却
-        PrintWriter out = res.getWriter();
-        out.print(response.toString());
-        out.flush();
-
     }
 
     @Override
@@ -64,7 +83,7 @@ public class MatchServlet extends HttpServlet {
 
         System.out.println("変換確認: " + form.toString());
 
-        // セッション情報が取れない場合はAPIえらーとして返却する
+        // セッション情報が取れない場合はAPIエラーとして返却する
         HttpSession session = req.getSession(false);
         JSONObject response = new JSONObject();
         if (req.getSession() == null) {
@@ -94,6 +113,18 @@ public class MatchServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
         out.print(response.toString());
         out.flush();
-
     }
+
+    private void execError(HttpServletResponse res) throws IOException {
+        PrintWriter out = res.getWriter();
+
+        JSONObject response = new JSONObject();
+        response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+        response.put("message", "システムエラーが発生しました");
+        out.print(response.toString());
+        out.flush();
+        logger.error("APIエラーレスポンス{}",response.toString());
+        logger.error("対戦一覧取得APIでエラーが発生しました");
+    }
+
 }

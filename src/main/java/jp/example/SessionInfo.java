@@ -11,6 +11,9 @@ package jp.example;
  */
 public class SessionInfo {
 
+    private int userId = 0;
+    private String name = "";
+
     public int getUserId() {
         return userId;
     }
@@ -27,7 +30,8 @@ public class SessionInfo {
         this.name = name;
     }
 
-    private int userId = 0;
-    private String name = "";
-
+    @Override
+    public String toString() {
+        return "SessionInfo [userId=" + userId + ", name=" + name + "]";
+    }
 }
