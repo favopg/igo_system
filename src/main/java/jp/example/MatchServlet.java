@@ -64,55 +64,48 @@ public class MatchServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res) {
         // register.htmlから登録ボタン押下時に呼ばれる
-        res.setContentType("text/html; charset=UTF-8");
-        res.setCharacterEncoding("UTF-8");
-        // JSONデータを読み取る
-        StringBuilder jsonData = new StringBuilder();
-        try (BufferedReader reader = req.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonData.append(line);
+        try {
+            res.setContentType("text/html; charset=UTF-8");
+            res.setCharacterEncoding("UTF-8");
+            // リクエスト情報変換
+            MatchForm form = ServletUtil.convertFormFromJson(req, MatchForm.class);
+            logger.debug("対戦結果登録APIの変換後データ{}", form.toString());
+
+            // セッション情報が取れない場合はAPIエラーとして返却する
+            HttpSession session = req.getSession(false);
+            JSONObject response = new JSONObject();
+            if (req.getSession() == null) {
+                throw new RuntimeException("セッション情報取得でエラー発生");
             }
-        }
-        System.out.println("受信したJSONデータ: " + jsonData.toString());
 
-        ObjectMapper mapper = new ObjectMapper();
-        MatchForm form = mapper.readValue(jsonData.toString(), MatchForm.class);
+            // バリデーションチェック
+            JSONObject validateResponse = ValidateUtil.validate(form);
+            if (validateResponse.optString(ApiResponse.STATUS.getCode()).equals(ApiResponse.NG.getCode())) {
+                PrintWriter out = res.getWriter();
+                out.print(validateResponse.toString());
+                out.flush();
+                logger.debug("対戦結果登録APIのバリデーションチェックエラー{}", validateResponse.toString());
+                return;
+            }
 
-        System.out.println("変換確認: " + form.toString());
-
-        // セッション情報が取れない場合はAPIエラーとして返却する
-        HttpSession session = req.getSession(false);
-        JSONObject response = new JSONObject();
-        if (req.getSession() == null) {
-            response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
-            response.put("message", "セッション切れです");
+            // 対戦登録処理
+            SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+            MatchService service = new MatchService();
+            response = service.register(form, sessionInfo);
 
             PrintWriter out = res.getWriter();
             out.print(response.toString());
             out.flush();
-            return;
+        } catch (Exception e) {
+            try {
+                execError(res);
+            } catch (IOException ex) {
+                logger.error("ここでエラー起きたらもうおしまいだよ", ex);
+                throw new RuntimeException(ex);
+            }
         }
-
-        // バリデーションチェック
-        JSONObject validateResponse = ValidateUtil.validate(form);
-        if (validateResponse.optString(ApiResponse.STATUS.getCode()).equals(ApiResponse.NG.getCode())) {
-            PrintWriter out = res.getWriter();
-            out.print(validateResponse.toString());
-            out.flush();
-            return;
-        }
-
-        SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
-
-        MatchService service = new MatchService();
-        response = service.register(form, sessionInfo);
-
-        PrintWriter out = res.getWriter();
-        out.print(response.toString());
-        out.flush();
     }
 
     private void execError(HttpServletResponse res) throws IOException {

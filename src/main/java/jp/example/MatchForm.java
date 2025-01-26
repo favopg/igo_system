@@ -89,5 +89,17 @@ public class MatchForm {
 		this.createdUserId = createdUserId;
 	}
 
-
+	@Override
+	public String toString() {
+		return "MatchForm{" +
+				"blackName=" + blackName +
+				", whiteName=" + whiteName +
+				", result=" + result +
+				", resultLink=" + resultLink +
+				", comment=" + comment +
+				", matchAt=" + matchAt +
+				", publicFlag=" + publicFlag +
+				", createdUserId=" + createdUserId +
+				"}";
+	}
 }
