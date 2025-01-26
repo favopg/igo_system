@@ -2,9 +2,11 @@ package jp.example
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.io.PrintWriter
 
 /**
  * ServletUtil
@@ -40,6 +42,23 @@ object ServletUtil {
             return mapper.readValue(jsonData.toString(), form)
         } catch (e: IOException) {
             throw RuntimeException("jsonデータ変換処理でエラー発生")
+        }
+    }
+
+    /**
+     * APIレスポンスを返却します。
+     * @param res レスポンス情報
+     * @param response レスポンス情報を詰めたJSONObject
+     */
+    @JvmStatic
+    fun apiResponse(res: HttpServletResponse, response : JSONObject) :Unit {
+        try {
+            val out: PrintWriter = res.getWriter()
+            out.print(response.toString())
+            out.flush()
+            logger.debug("APIレスポンス返却値{}", response.toString())
+        } catch (e : Exception){
+            throw RuntimeException("レスポンス返却でエラー発生")
         }
     }
 }

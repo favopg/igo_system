@@ -47,19 +47,12 @@ public class MatchServlet extends HttpServlet {
 
             logger.debug("対戦一覧結果一覧：{}", response.toString());
 
-            // JSONデータを返却
-            PrintWriter out = res.getWriter();
-            out.print(response.toString());
-            out.flush();
+            // APIレスポンス返却
+            ServletUtil.apiResponse(res, response);
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            try {
-                execError(res);
-            } catch (IOException ex) {
-                logger.error("ここでエラー起きたらもうおしまいだよ", ex);
-                throw new RuntimeException(ex);
-            }
+            execError(res);
         }
     }
 
@@ -75,7 +68,6 @@ public class MatchServlet extends HttpServlet {
 
             // セッション情報が取れない場合はAPIエラーとして返却する
             HttpSession session = req.getSession(false);
-            JSONObject response = new JSONObject();
             if (req.getSession() == null) {
                 throw new RuntimeException("セッション情報取得でエラー発生");
             }
@@ -93,31 +85,32 @@ public class MatchServlet extends HttpServlet {
             // 対戦登録処理
             SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
             MatchService service = new MatchService();
-            response = service.register(form, sessionInfo);
+            JSONObject response = service.register(form, sessionInfo);
 
             PrintWriter out = res.getWriter();
             out.print(response.toString());
             out.flush();
         } catch (Exception e) {
-            try {
-                execError(res);
-            } catch (IOException ex) {
-                logger.error("ここでエラー起きたらもうおしまいだよ", ex);
-                throw new RuntimeException(ex);
-            }
+            logger.debug("対戦登録処理でエラー発生");
+            logger.error(e.getMessage(), e);
+            execError(res);
         }
     }
 
-    private void execError(HttpServletResponse res) throws IOException {
-        PrintWriter out = res.getWriter();
+    private void execError(HttpServletResponse res) {
+        try {
+            PrintWriter out = res.getWriter();
+            JSONObject response = new JSONObject();
+            response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+            response.put("message", "システムエラーが発生しました");
 
-        JSONObject response = new JSONObject();
-        response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
-        response.put("message", "システムエラーが発生しました");
-        out.print(response.toString());
-        out.flush();
-        logger.error("APIエラーレスポンス{}",response.toString());
-        logger.error("対戦一覧取得APIでエラーが発生しました");
+            out.print(response.toString());
+            out.flush();
+            logger.error("APIエラーレスポンス{}", response.toString());
+            logger.error("対戦一覧取得APIでエラーが発生しました");
+        } catch (Exception e) {
+            throw new RuntimeException("ここでエラー起きたらもうおしまいだよ");
+        }
     }
 
 }
