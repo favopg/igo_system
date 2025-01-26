@@ -111,7 +111,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="game in matches.records" :key="game.id">
+                    <tr v-for="game in paginatedMatches" :key="game.id">
                         <td>{{ game.id }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-secondary">
@@ -130,6 +130,20 @@
                     </tbody>
                 </table>
             </div>
+
+            <nav aria-label="Page navigation">;
+                <ul class="pagination justify-content-center">
+                    <li class="page-item" :class="{disabled: currentPage === 1}">
+                        <a class="page-link" href="#" @click="prevPage">前へ</a>
+                    </li>
+                    <li v-for="page in totalPages" :key="page" class="page-item" :class="{active: currentPage === page }">
+                        <a class="page-link" @click="goToPage(page)" href="#">{{ page }}</a>
+                    </li>
+                    <li class="page-item" :class="{disabled: currentPage === totalPages}">
+                        <a class="page-link" href="#" @click="nextPage">次へ</a>
+                    </li>
+                </ul>
+            </nav>
 
             <!-- Pagination
             <nav aria-label="Page navigation">
@@ -154,25 +168,24 @@
 <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
 <script>
     const { createApp, ref, computed } = Vue
-
     createApp({
         setup() {
             var matches = ref([
                 {records:[]}
             ])
             var apiResponse = ref(0)
-
+            const itemsPerPage = 10
+            var currentPage = ref(1)
+            var totalPages = ref()
             /**
-             const itemsPerPage = 10
-             const currentPage = ref(1)
+            const itemsPerPage = 10
+            const currentPage = ref(1)
+            const totalPages = computed(() => Math.ceil(matches.records.length / itemsPerPage))
 
-             const totalPages = computed(() => Math.ceil(games.value.length / itemsPerPage))
-
-             const paginatedGames = computed(() => {
-             const start = (currentPage.value - 1) * itemsPerPage
-             const end = start + itemsPerPage
-             return games.value.slice(start, end)
-             })
+            const paginatedGames = computed(() => {
+                const start = (currentPage.value - 1) * itemsPerPage
+                const end = start + itemsPerPage
+            })
 
              const changePage = (page) => {
              if (page >= 1 && page <= totalPages.value) {
@@ -190,10 +203,11 @@
 
             return {
                 matches,
-                apiResponse
+                apiResponse,
+                currentPage,
+                totalPages,
+                itemsPerPage
                 /**
-                 currentPage,
-                 totalPages,
                  paginatedGames,
                  changePage,
                  totalWins,
@@ -218,14 +232,35 @@
                         this.matches.records = parsedData.records;
                         console.log("配列の値" + JSON.stringify( this.matches.records, null, 2));
                         this.apiResponse = parsedData;
+
+                        this.totalPages = Math.ceil(this.matches.records.length / this.itemsPerPage);
                     })
                     .catch(error => {
                         console.error("データ取得に失敗しました")
                     });
-
             },
-
+            nextPage() {
+                if (this.currentPage < this.totalPages) {
+                    this.currentPage++;
+                }
+            },
+            prevPage() {
+                if (this.currentPage > 1) {
+                    this.currentPage--;
+                }
+            },
+            goToPage(page) {
+                this.currentPage = page;
+            },
         },
+        computed: {
+            paginatedMatches() {
+                const start = (this.currentPage - 1) * this.itemsPerPage;
+                const end = start + this.itemsPerPage;
+                return this.matches.records.slice(start, end);
+            }
+        },
+
         mounted() {
             this.selectMatches();
         }
