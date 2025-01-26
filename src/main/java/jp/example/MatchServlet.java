@@ -75,21 +75,20 @@ public class MatchServlet extends HttpServlet {
             // バリデーションチェック
             JSONObject validateResponse = ValidateUtil.validate(form);
             if (validateResponse.optString(ApiResponse.STATUS.getCode()).equals(ApiResponse.NG.getCode())) {
-                PrintWriter out = res.getWriter();
-                out.print(validateResponse.toString());
-                out.flush();
+                ServletUtil.apiResponse(res, validateResponse);
                 logger.debug("対戦結果登録APIのバリデーションチェックエラー{}", validateResponse.toString());
                 return;
             }
 
-            // 対戦登録処理
             SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+            logger.debug("セッション情報{}",sessionInfo.toString());
+
+            // 対戦登録処理
             MatchService service = new MatchService();
             JSONObject response = service.register(form, sessionInfo);
 
-            PrintWriter out = res.getWriter();
-            out.print(response.toString());
-            out.flush();
+            ServletUtil.apiResponse(res, response);
+
         } catch (Exception e) {
             logger.debug("対戦登録処理でエラー発生");
             logger.error(e.getMessage(), e);
