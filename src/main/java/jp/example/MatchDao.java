@@ -1,8 +1,6 @@
 package jp.example;
 
-import org.seasar.doma.Dao;
-import org.seasar.doma.Insert;
-import org.seasar.doma.Select;
+import org.seasar.doma.*;
 
 import java.util.List;
 import java.util.Map;
@@ -24,4 +22,7 @@ public interface MatchDao {
 
     @Insert
     public int insertMatch(MatchEntity entity);
+
+    @BatchDelete
+    public int[] deleteMatch(List<MatchEntity> matchEntityList);
 }

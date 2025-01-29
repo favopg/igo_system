@@ -1,9 +1,10 @@
 package jp.example;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,11 +14,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet("/sample/igo_system")
+@WebServlet(urlPatterns = {"/sample/igo_system"})
 public class MatchServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchServlet.class);
@@ -93,6 +93,25 @@ public class MatchServlet extends HttpServlet {
             logger.debug("対戦登録処理でエラー発生");
             logger.error(e.getMessage(), e);
             execError(res);
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse res) {
+        try {
+            res.setContentType("text/html; charset=UTF-8");
+            res.setCharacterEncoding("UTF-8");
+            ObjectMapper objectMapper = new ObjectMapper();
+            int[] ids = objectMapper.readValue(req.getInputStream(),int[].class);
+            logger.debug("削除選択された対戦件数{}", ids.length);
+
+            MatchService service = new MatchService();
+            JSONObject response = service.delete(ids);
+
+            ServletUtil.apiResponse(res, response);
+
+        } catch (Exception e) {
+            throw new RuntimeException("削除APIでエラーが発生しました",e);
         }
     }
 

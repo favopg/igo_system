@@ -1,6 +1,7 @@
 package jp.example;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +114,29 @@ public class MatchService {
 			return response;
 		}
 
+		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
+		return response;
+	}
+
+	/**
+	 * 入力情報から、対戦テーブルを複数削除します。<br>
+	 * {@link MatchDao#deleteMatch(List)}
+	 * @param matchIds 選択された対戦ID
+	 * @return APIレスポンスを詰めた　JSONObject
+	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
+	 */
+	public JSONObject delete(int[] matchIds) {
+		JSONObject response = new JSONObject();
+
+		List<MatchEntity> matchEntityList = new ArrayList<>();
+        for (int matchId : matchIds) {
+            MatchEntity entity = new MatchEntity();
+            entity.setId(matchId);
+            matchEntityList.add(entity);
+        }
+
+		// 削除実行
+		dao.deleteMatch(matchEntityList);
 		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
 		return response;
 	}

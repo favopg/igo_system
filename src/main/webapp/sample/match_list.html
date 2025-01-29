@@ -296,6 +296,28 @@
                 // モーダルを閉じる
                 const modal = bootstrap.Modal.getInstance(document.getElementById("deleteModal"));
                 modal.hide();
+
+                fetch('igo_system',{
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body:JSON.stringify(this.selectedIds)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP error ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('削除完了しました');
+                        this.selectMatches();
+                        this.selectedIds = [];
+                    })
+                    .catch(error => {
+                        console.error('エラー:', error);
+                    });
             },
             toggleAll(event) {
                 if (event.target.checked) {
