@@ -37,6 +37,22 @@ public class MatchService {
 	}
 
 	/**
+	 * idを使用し、編集用の対戦データを取得します<br>
+	 * @param id id
+	 * @return 編集用対戦データ
+	 */
+	public JSONObject getMatch(int id) {
+		Map<String, Object> matchMap = transaction.required(() -> {
+			return dao.selectFindById(id);
+		});
+
+		JSONObject response = new JSONObject(matchMap);
+		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
+
+		return response;
+	}
+
+	/**
 	 * ユーザIDを使用し、ログインユーザの対戦一覧と公開設定している他のユーザの対戦情報すべてを取得します。<br>
 	 * {@link MatchDao#selectFindByUserId(int)}
 	 * @param userId セッション保持しているユーザID

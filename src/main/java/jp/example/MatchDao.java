@@ -18,6 +18,9 @@ import java.util.Map;
 public interface MatchDao {
 
     @Select
+    public Map<String, Object> selectFindById(int id);
+
+    @Select
     public List<Map<String, Object>> selectFindByUserId(int userId);
 
     @Insert
