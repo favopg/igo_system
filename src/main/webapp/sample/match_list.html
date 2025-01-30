@@ -124,7 +124,7 @@
                         <td><input type="checkbox" v-model="selectedIds" :value="game.id" /></td>
                         <td>{{ game.id }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary">
+                            <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, game)">
                                 <i class="bi bi-pencil"></i>
                             </button>
                         </td>
@@ -325,6 +325,11 @@
                 } else {
                     this.selectedIds = [];
                 }
+            },
+            transitionEdit(event, item) {
+                console.log('編集ボタンが押下されました');
+                console.log('セルの値',item.id);
+                window.location.href = `edit.html?id=${item.id}`;
             },
         },
         computed: {

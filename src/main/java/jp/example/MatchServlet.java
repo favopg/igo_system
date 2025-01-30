@@ -1,11 +1,8 @@
 package jp.example;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +14,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet(urlPatterns = {"/sample/igo_system"})
+@WebServlet(urlPatterns = {"/sample/igo_system", "/sample/igo_system/refer"})
 public class MatchServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchServlet.class);
@@ -32,28 +29,75 @@ public class MatchServlet extends HttpServlet {
             String path = req.getServletPath();
             logger.debug("リクエストパス{}", path);
 
-            // セッション情報取得
-            HttpSession session = req.getSession(false);
-            if (session == null) {
-                throw new RuntimeException("セッション情報取得でエラー発生");
+            switch (path) {
+                case "/sample/igo_system/refer":
+                    refer(req, res);
+                    break;
+
+                default:
+                    list(req, res);
+                    break;
             }
-
-            SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
-            logger.debug("セッション情報{}", sessionInfo.toString());
-
-            // 対戦データ全取得
-            MatchService service = new MatchService();
-            JSONObject response = service.getMatchList(sessionInfo.getUserId());
-
-            logger.debug("対戦一覧結果一覧：{}", response.toString());
-
-            // APIレスポンス返却
-            ServletUtil.apiResponse(res, response);
-
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             execError(res);
         }
+    }
+
+    /**
+     * 編集用の対戦データを取得します。
+     * @param req リクエスト
+     * @param res レスポンス
+     * @throws Exception 例外発生時にスローします。
+     */
+    private void refer(HttpServletRequest req, HttpServletResponse res) throws Exception {
+        // セッション情報取得
+        HttpSession session = req.getSession(false);
+        if (session == null) {
+            throw new RuntimeException("セッション情報取得でエラー発生");
+        }
+
+        SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+        logger.debug("セッション情報{}", sessionInfo.toString());
+
+        logger.debug("選択された対戦id{}", req.getParameter("id"));
+
+        // 対戦データ全取得
+        MatchService service = new MatchService();
+        JSONObject response = service.getMatch(Integer.parseInt(req.getParameter("id")));
+
+        logger.debug("対戦一覧結果一覧：{}", response.toString());
+
+        // APIレスポンス返却
+        ServletUtil.apiResponse(res, response);
+
+    }
+
+    /**
+     * 対戦一覧データ取得します
+     * @param req リクエスト
+     * @param res　レスポンス
+     */
+    private void list(HttpServletRequest req, HttpServletResponse res) {
+
+        // セッション情報取得
+        HttpSession session = req.getSession(false);
+        if (session == null) {
+            throw new RuntimeException("セッション情報取得でエラー発生");
+        }
+
+        SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+        logger.debug("セッション情報{}", sessionInfo.toString());
+
+        // 対戦データ全取得
+        MatchService service = new MatchService();
+        JSONObject response = service.getMatchList(sessionInfo.getUserId());
+
+        logger.debug("対戦一覧結果一覧：{}", response.toString());
+
+        // APIレスポンス返却
+        ServletUtil.apiResponse(res, response);
+
     }
 
     @Override

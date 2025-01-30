@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>囲碁対戦編集</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+	<style>
+		.sidebar {
+			position: fixed;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			z-index: 100;
+			padding: 48px 0 0;
+			box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+		}
+		@media (max-width: 767.98px) {
+			.sidebar {
+				top: 5rem;
+			}
+		}
+		.sidebar-sticky {
+			position: relative;
+			top: 0;
+			height: calc(100vh - 48px);
+			padding-top: .5rem;
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
+
+		.custom-alert {
+			border-color: #0d6efd; /* 青枠 */
+			color: #dc3545; /* 赤字 */
+			background-color: #f8d7da; /* 薄い赤の背景 */
+		}
+
+		/** ローディング用スタイル */
+		.loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;
+		}
+
+		.loading-content {
+			background: white;
+			padding: 20px;
+			border-radius: 8px;
+			text-align: center;
+		}
+
+		.spinner-border {
+			width: 3rem;
+			height: 3rem;
+		}
+		/** ローディング用スタイル ここまで */
+
+
+	</style>
+</head>
+<body>
+<div id="app" class="container-fluid">
+
+	<!-- モーダル -->
+	<div class="modal fade" tabindex="-1" ref="myModal" id="exampleModal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">登録完了</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p>対戦成績が登録完了しました。</p>
+					<p>対戦成績一覧画面に遷移します。</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">NO</button>
+					<button type="button" @click="getTrantition" class="btn btn-primary">OK</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ローディングオーバーレイ -->
+	<div v-if="loading" class="loading-overlay">
+		<div class="loading-content">
+			<div class="spinner-border text-primary" role="status">
+				<span class="visually-hidden">登録中...</span>
+			</div>
+			<div class="mt-2">
+				対戦成績を登録中...
+			</div>
+			<div class="progress mt-2" style="width: 200px;">
+				<div class="progress-bar progress-bar-striped progress-bar-animated"
+					 role="progressbar"
+					 style="width: 100%">
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="row">
+		<!-- Sidebar -->
+		<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+			<div class="position-sticky pt-3">
+				<ul class="nav flex-column">
+					<li class="nav-item">
+						<a class="nav-link text-white" href="match_list.html">
+							<i class="bi bi-table me-2"></i>
+							対戦一覧
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link active text-white" href="#">
+							<i class="bi bi-plus-square me-2"></i>
+							対戦登録
+						</a>
+					</li>
+				</ul>
+				<div class="border-top my-3"></div>
+				<ul class="nav flex-column mb-2">
+					<li class="nav-item">
+						<a class="nav-link text-white" href="#">
+							<i class="bi bi-box-arrow-right me-2"></i>
+							ログアウト
+						</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+
+		<!-- Main content -->
+		<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+			<!-- Header -->
+			<div class="bg-info text-white p-2 mb-4">
+				<h2 class="h4 mb-0">対戦編集</h2>
+			</div>
+			<div v-if="errors.message"  id="errorMessage" class="alert custom-alert" role="alert">
+				{{ errors.message }}
+			</div>
+
+
+			<!-- Registration Form -->
+			<div class="row">
+				<div class="col-md-8 col-lg-6">
+					<form @submit.prevent="validateForm" class="border p-4 rounded">
+						<div class="mb-3">
+							<label for="blackName" class="form-label">黒番</label>
+							<input type="text" class="form-control" id="blackName" v-model="input.black_name" required>
+							<div v-if="errors.blackName" class="text-danger mt-1">
+								{{ errors.blackName }}
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="whiteName" class="form-label">白番</label>
+							<input type="text" class="form-control" id="whiteName" v-model="input.white_name" required>
+							<div v-if="errors.whiteName" class="text-danger mt-1">
+								{{ errors.whiteName }}
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="result" class="form-label">結果</label>
+							<input type="text" class="form-control" id="result" v-model="input.result" required>
+							<div v-if="errors.result" class="text-danger mt-1">
+								{{ errors.result }}
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="resultLink" class="form-label">棋譜</label>
+							<input type="url" class="form-control" id="resultLink" v-model="input.result_link">
+							<div v-if="errors.resultLink" class="text-danger mt-1">
+								{{ errors.resultLink }}
+							</div>
+						</div>
+						<div class="mb-3">
+							<label for="matchAt" class="form-label">対戦日</label>
+							<input type="date" class="form-control" id="matchAt" v-model="input.match_at">
+						</div>
+						<div class="mb-3">
+							<label for="comment" class="form-label">コメント</label>
+							<textarea class="form-control" id="comment" rows="3" v-model="input.comment"></textarea>
+							<div v-if="errors.comment" class="text-danger mt-1">
+								{{ errors.comment }}
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label d-block">公開設定</label>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="public_flag" id="public" value="true" v-model="input.public_flag" required>
+								<label class="form-check-label" for="public">公開</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="public_flag" id="private" value="false" v-model="input.public_flag" required>
+								<label class="form-check-label" for="private">非公開</label>
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">修正</button>
+					</form>
+				</div>
+			</div>
+		</main>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+	const { createApp} = Vue;
+	createApp({
+		setup() {
+			const openModal = () => {
+				// モーダルを取得
+				const modalElement = document.getElementById('exampleModal');
+				// Bootstrap の Modal クラスを初期化
+				const modal = new bootstrap.Modal(modalElement);
+				// モーダルを表示
+				modal.show();
+			};
+
+			return {
+				openModal,
+			};
+
+			// expose で関数を公開
+			expose({
+				openModal
+			});
+		},
+		data() {
+			return {
+				loading: false,
+				input: {
+					// blackName: "",
+					// whiteName: "",
+					// result: "",
+					// resultLink: "",
+					// comment: "",
+					// matchAt:"",
+					// publicFlag:false,
+					// id:"",
+					// status:"",
+
+				},
+				errors: {
+					blackName: "",
+					whiteName: "",
+					result: "",
+					resultLink: "",
+					comment: "",
+					matchAt:"",
+					publicFlag:false,
+					message:"",
+					isValidate:false
+				},
+			};
+		},
+		methods: {
+			getTrantition() {
+				// 画面遷移する
+				window.location.href = 'match_list.html';
+			},
+
+			validateForm() {
+				// リセット
+				this.errors = {
+					blackName: "",
+					whiteName: "",
+					result: "",
+					resultLink: "",
+					comment: "",
+					matchAt:"",
+					publicFlag:"private",
+					isValidate:false,
+					message:"",
+				};
+
+				// 黒番：全角20文字チェック
+				if (!this.isFullWidth(this.input.blackName) || this.input.blackName.length > 20) {
+					this.errors.blackName = "黒番は全角20文字以内で入力してください。";
+					this.errors.isValidate = true;
+				}
+
+				// 白番：全角20文字チェック
+				if (!this.isFullWidth(this.input.whiteName) || this.input.whiteName.length > 20) {
+					this.errors.whiteName = "白番は全角20文字以内で入力してください。";
+					this.errors.isValidate = true;
+				}
+
+				// 結果：黒 or 白 かつ 勝 or 負を含むか
+				if (!/(黒|白).*(勝|負)/.test(this.input.result)) {
+					this.errors.result = "結果は「黒 or 白」と「勝 or 負」を含めて入力してください。";
+					this.errors.isValidate = true;
+				}
+
+				/**
+				 // 棋譜：半角英数字記号チェック
+				 if (!/^[\x20-\x7E]+$/.test(this.input.resultLink)) {
+				 this.errors.resultLink = "棋譜は半角英数字および記号で入力してください。";
+				 }
+				 */
+
+				if(this.errors.isValidate) {
+					return;
+				}
+
+				// ローディング表示
+				this.loading = true;
+
+				// ここに登録用ロジックを記載
+				fetch('igo_system',{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body:JSON.stringify(this.input)
+				})
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('HTTP error ' + response.status);
+							}
+							return response.json();
+						})
+						.then(data => {
+							if (data.status === 'success') {
+								// 処理完了後にローディング非表示
+								this.loading = false;
+								// success の場合にモーダル画面を表示する
+								this.openModal();
+							} else {
+								// 処理完了後にローディング非表示
+								this.loading = false;
+								// errorの場合はエラーメッセージを表示する
+								this.errors.message = data.message;
+							}
+						})
+						.catch(error => {
+							console.error('エラー:', error);
+						});
+
+			},
+			// 全角チェック
+			isFullWidth(input) {
+				return /^[^\x00-\x7F]*$/.test(input);
+			},
+
+			selectMatch() {
+				const urlParams = new URLSearchParams(window.location.search);
+
+				fetch("igo_system/refer?" + urlParams.toString())
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('HTTP error ' + response.status);
+							}
+							return response.json();
+						})
+						.then(data => {
+							const responseJson = JSON.stringify(data, null, 2);
+							const parsedData = JSON.parse(responseJson);
+							this.input = parsedData;
+							console.log("編集データ取得できました"+ this.input);
+
+						})
+						.catch(error => {
+							console.error("データ取得に失敗しました")
+						});
+			},
+		},
+		mounted() {
+			this.selectMatch();
+		}
+	}).mount("#app");
+</script>
+</body>
+</html>
