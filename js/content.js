@@ -1,27 +1,29 @@
 // ここからはメニュー部分
 const naviSidever = Vue.createApp({
   data() {
-    return {};
+    return {
+    };
   },
 });
 
 naviSidever.component("navi_sideber", {
+  props: ['activekbn'],
 	template: `
 		<div class="sidebar-content">
     		<h3 class="text-white mb-4">メニュー</h3>
-            	<ul class="nav flex-column mb-auto">
+              <ul class="nav flex-column mb-auto nav-pills">
             		<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white">
+                    	<a href="#" class="nav-link text-white" :class="activekbn === '1' ? 'active':'' ">
                         	<i class="bi bi-list-ul me-2"></i>対戦一覧
                     	</a>
                 	</li>
                 	<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white">
+                    	<a href="#" class="nav-link text-white" :class="activekbn === '2' ? 'active':'' ">
                         	<i class="bi bi-plus-circle me-2"></i>対戦登録
                     	</a>
                 	</li>
                 	<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white">
+                    	<a href="#" class="nav-link text-white" :class="activekbn === '3' ? 'active':'' ">
                         	<i class="bi bi-file-earmark-arrow-up me-2"></i>CSV取込
                     	</a>
                 	</li>
@@ -29,7 +31,7 @@ naviSidever.component("navi_sideber", {
     	</div>
     	<button class="btn btn-danger w-100">
             <i class="bi bi-box-arrow-right me-2"></i>ログアウト
-        </button>
+      </button>
 	`,
 });
 naviSidever.mount('#sidebar')

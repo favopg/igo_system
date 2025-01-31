@@ -14,27 +14,26 @@
     <div class="d-flex">
         <!-- サイドバー -->
         <nav id="sidebar" class="bg-dark text-white p-3">
-            <navi_sideber></navi_sideber>
+            <navi_sideber activekbn="1"></navi_sideber>
         </nav>
 
         <!-- オーバーレイ -->
         <div id="overlay"></div>
 
         <!-- メインコンテンツ -->
-        <div id="content" class="flex-grow-1 content-wrapper">
+        <div class="flex-grow-1 content-wrapper">
             <!-- ヘッダー -->
             <header class="bg-info text-white p-3 d-flex justify-content-between align-items-center">
-                <h2 @click="change">対戦一覧</h2>
+                <h2>対戦一覧</h2>
                 <button class="btn btn-light d-md-none" id="sidebarToggle">
                     <i class="bi bi-list"></i>
                 </button>
             </header>
 
             <!-- コンテンツ -->
-            <main class="p-4">
+            <main id="content" class="p-4">
                 <!-- ここにコンテンツを追加 -->
                 <p>{{ message }}</p>
-                <greeting></greeting>
             </main>
         </div>
     </div>
