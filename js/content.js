@@ -51,62 +51,103 @@ const modal = Vue.createApp({
     },
   });
   
-  modal.component("modal", {
-      props: ['modalinfo'],
-      template: `
+modal.component("modal", {
+    props: ['title', 'detail', 'danger_info', 'primary_info'],
+    template: `
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="confirmModalLabel">{{modalinfo.title}}</h1>
+                    <h1 class="modal-title fs-5" id="confirmModalLabel">{{ title}}</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {{modalinfo.detail}}
+                    {{ detail }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ modalinfo.dangerinfo }}</button>
-                    <button type="button" class="btn btn-primary">{{ modalinfo.primaryinfo}}</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ danger_info }}</button>
+                    <button type="button" class="btn btn-primary">{{ primary_info}}</button>
                 </div>
             </div>
         </div>
-      `,
-  });
-  modal.mount('#confirmModal')
-  // ここまでモーダル
-  
-
-
-// ここからはコンテンツ部分
-const app = Vue.createApp({
-  data() {
-    return {
-      message: "ここに対戦一覧のコンテンツが入ります。",
-    };
-  },
-  methods: {
-    change() {
-      this.message = "切り替えます";
-    },
-  },
-});
-
-// コンポーネントの登録
-app.component("greeting", {
-  template: `
-        <div>
-            <h1>{{ message }}</h1>
-            <button @click="changeMessage">メッセージを変更</button>
-        </div>
     `,
-  data() {
-    return {
-      message: "こんにちは、Vue 3 コンポーネント!",
-    };
-  },
-  methods: {
-    changeMessage() {
-      this.message = "メッセージが変更されました！";
+  });
+modal.mount('#confirmModal')
+// ここまでモーダル
+  
+// ここから入力フォーム
+const formInput = Vue.createApp({
+    data() {
+        return {
+            match_info: {
+                black_name:"",
+                white_name:"",
+                result:"",
+                result_link:"",
+                match_at:"",
+                comment:"",
+                public_flag:"0"
+            },
+            error_info: {
+                black_name:"",
+                white_name:"",
+                result:"",
+                result_link:"",
+                match_at:"",
+                comment:"",
+                public_flag:"0"
+            }
+        }
     },
-  },
+    methods: {
+        register() {
+            this.error_info.black_name = "黒番はログインIDか対戦相手のいずれかを入力してください"
+            console.log("黒番の値" + this.match_info.black_name)
+            console.log("白番の値" + this.match_info.white_name)
+            console.log("公開非公開" + this.match_info.public_flag)
+
+        }
+    },
 });
-app.mount("#content");
+
+formInput.component('forminput',{
+    props: ["label_for", "item_name", "type", "placeholder", "error_message", "class_name", "icon", "modelValue"],
+    template: `
+        <div id="form-input" class="mb-1 col-md-8">
+            <label :for="label_for" class="form-label"><i class="me-1" :class="[class_name,icon]"></i>{{ item_name }}</label>
+            <input :type="type" class="form-control" :id="label_for" :placeholder="placeholder" 
+            @input="$emit('update:modelValue', $event.target.value)">
+        </div>
+        <div v-if="error_message" class="text-danger mb-3 bi-x-circle-fill">
+            {{ error_message }}
+        </div>
+    `,  
+});
+
+// ラジオボタン
+formInput.component('formradio',{
+    props: ["label_for", "item_name", "checked", "value", "name"],
+    template: `
+        <div class="form-check form-check-inline mb-3">
+            <input :id="label_for" class="form-check-input" :name="name" type="radio" :checked ="checked" :value="value">
+            <label :for="label_for" class="form-check-label">
+                {{ item_name }}
+            </label>
+        </div>
+    `,  
+});
+
+// テキストエリア
+formInput.component('formtextarea',{
+    props: ["label_for", "item_name", "placeholder", "error_message", "class_name", "icon", "modelValue", "rows"],
+    template: `
+        <div class="mb-4">
+            <label :for="label_for" class="form-label"><i class="me-1" :class="[class_name,icon]"></i>{{ item_name }}</label>
+            <textarea class="form-control" :id="label_for" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
+        </div>
+        <div v-if="error_massage" class="text-danger mb-3 bi-x-circle-fill">
+            {{ error_message  }}
+        </div>
+    `,  
+});
+
+formInput.mount("#form-input")
