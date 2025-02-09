@@ -88,23 +88,24 @@ modal.mount('#igo_modal')
 const formInput = Vue.createApp({
     data() {
         return {
-            match_info: {
-                black_name:"",
-                white_name:"",
+            matchInfo: {
+                blackName:"",
+                whiteName:"",
                 result:"",
-                result_link:"",
-                match_at:"",
+                resultLink:"",
+                matchAt:"",
                 comment:"",
-                public_flag:"0"
+                publicFlag:"0"
             },
-            error_info: {
-                black_name:"",
-                white_name:"",
+            errorInfo: {
+                blackName:"",
+                whiteName:"",
                 result:"",
-                result_link:"",
-                match_at:"",
+                resultLink:"",
+                matchAt:"",
                 comment:"",
-                public_flag:"0"
+                publicFlag:"0",
+                errorMessage:""
             }
         }
     },
@@ -122,60 +123,89 @@ const formInput = Vue.createApp({
         },
         // バリデーションチェック
         validateForm() {
-            this.error_info = {
-                black_name: "",
-                white_name: "",
+            this.errorInfo = {
+                blackName: "",
+                whiteName: "",
                 result: "",
-                result_link: "",
+                resultLink: "",
                 comment: "",
-                match_at:"",
-                public_flag:"0",
-                is_validated: false
+                matchAt:"",
+                publicFlag:"0",
+                isValidated: false,
+                errorMessage:""
             };
 
             // 黒番必須チェック
-            if (this.match_info.black_name.trim() === "") {
-				this.error_info.black_name = "黒番はログインIDか対戦相手を入力してください。";
-				this.error_info.is_validated = true;
+            if (this.matchInfo.blackName.trim() === "") {
+				this.errorInfo.blackName = "黒番はログインIDか対戦相手を入力してください。";
+				this.errorInfo.isValidated = true;
             }
 
-            if (this.error_info.black_name.trim() === "") {
+            if (this.errorInfo.blackName.trim() === "") {
                 // 黒番：20文字チェック
-                if (this.match_info.black_name.length > 20) {
-                    this.error_info.black_name = "黒番は20文字以内で入力してください。";
-                    this.error_info.is_validated = true;
+                if (this.matchInfo.blackName.length > 20) {
+                    this.errorInfo.blackName = "黒番は20文字以内で入力してください。";
+                    this.errorInfo.isValidated = true;
                 }
             }
 
             // 白番必須チェック
-            
-
-        },        
+        },
+        // fetchAPIでServletをコールする
+        callApi(endpoint, method) {
+            fetch(endpoint,{
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body:JSON.stringify(this.input)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        this.error_info.errorMessage = 'APIコールで失敗しました'
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                        // API返却値(json)を返却する
+                        return response.json();
+                    })
+                .then(data => {
+                    if (data.status === 'success') {
+                        // 処理完了後に完了メッセージをダイアログ表示する
+                    } else {
+                        // 処理完了後にローディング非表示
+                        // errorの場合はエラーメッセージを表示する
+                        this.error_info.errorMessage = data.message
+                    }
+                })
+                .catch(error => {
+                    console.error('エラー:', error);
+                });
+        }
     },
 });
 
 formInput.component('forminput',{
-    props: ["label_for", "item_name", "type", "placeholder", "error_message", "class_name", "icon", "modelValue"],
+    props: ["labelFor", "itemName", "type", "placeholder", "errorMessage", "className", "icon", "modelValue"],
     template: `
         <div id="form-input" class="mb-1 col-md-8">
-            <label :for="label_for" class="form-label"><i class="me-1" :class="[class_name,icon]"></i>{{ item_name }}</label>
-            <input :type="type" class="form-control" :id="label_for" :placeholder="placeholder" 
+            <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
+            <input :type="type" class="form-control" :id="labelFor" :placeholder="placeholder" 
             @input="$emit('update:modelValue', $event.target.value)">
         </div>
-        <div v-if="error_message" class="text-danger mb-3 bi-x-circle-fill">
-            {{ error_message }}
+        <div v-if="errorMessage" class="text-danger mb-3 bi-x-circle-fill">
+            {{ errorMessage }}
         </div>
     `,  
 });
 
 // ラジオボタン
 formInput.component('formradio',{
-    props: ["label_for", "item_name", "checked", "value", "name"],
+    props: ["labelFor", "itemName", "checked", "value", "name"],
     template: `
         <div class="form-check form-check-inline mb-3">
-            <input :id="label_for" class="form-check-input" :name="name" type="radio" :checked ="checked" :value="value">
-            <label :for="label_for" class="form-check-label">
-                {{ item_name }}
+            <input :id="labelFor" class="form-check-input" :name="name" type="radio" :checked ="checked" :value="value">
+            <label :for="labelFor" class="form-check-label">
+                {{ itemName }}
             </label>
         </div>
     `,  
@@ -183,14 +213,14 @@ formInput.component('formradio',{
 
 // テキストエリア
 formInput.component('formtextarea',{
-    props: ["label_for", "item_name", "placeholder", "error_message", "class_name", "icon", "modelValue", "rows"],
+    props: ["labelFor", "itemName", "placeholder", "errorMessage", "className", "icon", "modelValue", "rows"],
     template: `
         <div class="mb-4">
-            <label :for="label_for" class="form-label"><i class="me-1" :class="[class_name,icon]"></i>{{ item_name }}</label>
-            <textarea class="form-control" :id="label_for" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
+            <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
+            <textarea class="form-control" :id="labelFor" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
         </div>
-        <div v-if="error_massage" class="text-danger mb-3 bi-x-circle-fill">
-            {{ error_message  }}
+        <div v-if="errorNassage" class="text-danger mb-3 bi-x-circle-fill">
+            {{ errorMessage  }}
         </div>
     `,  
 });

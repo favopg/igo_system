@@ -48,78 +48,83 @@
 
                 <!-- 対戦結果入力フォーム -->
                 <div id="form-input">
-                    <forminput v-model="match_info.black_name" 
-                        :label_for="'black_name'" , 
-                        :item_name="'黒番'" ,
+                    <!-- APIコールエラーメッセージ表示 -->
+                    <div v-if="errorInfo.errorMessage" class="alert alert-danger" role="alert">
+                        {{ errorInfo.errorMessage }}
+                    </div>
+    
+                    <forminput v-model="matchInfo.blackName" 
+                        :label-for="'blackName'" , 
+                        :item-name="'黒番'" ,
                         :type="'text'" , 
                         :placeholder="'例：ログインID'" , 
-                        :error_message="error_info.black_name" ,
-                        :class_name="'text-danger'" , 
+                        :error-message="errorInfo.blackName" ,
+                        :class-name="'text-danger'" , 
                         :icon="'bi bi-exclamation-circle-fill'">
                     </forminput>
 
-                    <forminput v-model="match_info.white_name" 
-                        :label_for="'white_name'" , 
-                        :item_name="'白番'" ,
+                    <forminput v-model="matchInfo.whiteName" 
+                        :label-for="'whiteName'" , 
+                        :item-name="'白番'" ,
                         :type="'text'" , 
                         :placeholder="'例：対局相手'" , 
-                        :error_message="error_info.white_name" ,
-                        :class_name="'text-danger'" , 
+                        :error-message="errorInfo.whiteName" ,
+                        :class-name="'text-danger'" , 
                         :icon="'bi bi-exclamation-circle-fill'">
                     </forminput>
 
-                    <forminput v-model="match_info.result" 
-                        :label_for="'result'" , 
-                        :item_name="'結果'" ,
+                    <forminput v-model="matchInfo.result" 
+                        :label-for="'result'" , 
+                        :item-name="'結果'" ,
                         :type="'text'" , 
                         :placeholder="'例：黒6目半勝ち'" , 
-                        :error_message="error_info.result" ,
-                        :class_name="'text-danger'" , 
+                        :error-message="errorInfo.result" ,
+                        :class-name="'text-danger'" , 
                         :icon="'bi bi-exclamation-circle-fill'">
                     </forminput>
 
-                    <forminput v-model="match_info.result" 
-                        :label_for="'result_link'" , 
-                        :item_name="'棋譜'" ,
+                    <forminput v-model="matchInfo.resultLink" 
+                        :label-for="'result_link'" , 
+                        :item-name="'棋譜'" ,
                         :type="'url'" , 
                         :placeholder="'例：https://gokifu.net/kifutweet2.php'" , 
-                        :error_message="error_info.result_link" ,
-                        :class_name="'text-info'" , 
+                        :error-message="errorInfo.resultLink" ,
+                        :class-name="'text-info'" , 
                         :icon="'bi-check-circle-fill'">
                     </forminput>
 
-                    <forminput v-model="match_info.result" 
-                        :label_for="'match_at'" , 
-                        :item_name="'対戦日'" ,
+                    <forminput v-model="matchInfo.matchAt" 
+                        :label-for="'match_at'" , 
+                        :item-name="'対戦日'" ,
                         :type="'date'" , 
                         :placeholder="'例：2025/01/01'" , 
-                        :error_message="error_info.match_at" ,
-                        :class_name="'text-info'" , 
+                        :error-message="errorInfo.matchAt" ,
+                        :class-name="'text-info'" , 
                         :icon="'bi-check-circle-fill'">
                     </forminput>
                     
                     <!-- ラジオボタン -->
                     <label class="form-label d-block"><i class="me-1 bi-check-circle-fill text-info"></i>公開設定</label>
-                    <formradio v-model="match_info.public_flag" 
-                        name="public_flag"
-                        :item_name="'公開'" 
-                        :label_for="'public'" 
-                        :checked= "match_info.public_flag === '1'">
+                    <formradio v-model="matchInfo.publicFlag" 
+                        :name="publicFlag"
+                        :item-name="'公開'" 
+                        :label-for="'public'" 
+                        :checked= "matchInfo.publicFlag === '1'">
                     </formradio>                    
-                    <formradio v-model="match_info.public_flag" 
-                        name="public_flag" 
-                        :item_name="'非公開'" 
-                        :label_for="'private'"  
-                        :checked= "match_info.public_flag === '0'">
+                    <formradio v-model="matchInfo.publicFlag" 
+                        :name="publicFlag" 
+                        :item-name="'非公開'" 
+                        :label-for="'private'"  
+                        :checked= "matchInfo.publicFlag === '0'">
                     </formradio>
 
                     <!-- コメント -->
-                     <formtextarea v-model="match_info.comment"
-                        :label_for="'comment'" , 
-                        :item_name="'コメント'" ,
+                     <formtextarea v-model="matchInfo.comment"
+                        :label-for="'comment'" , 
+                        :item-name="'コメント'" ,
                         :placeholder="'上手く打たれたけど、満足できる１局だった'" , 
-                        :error_message="error_info.comment" ,
-                        :class_name="'text-info'" , 
+                        :error-message="errorInfo.comment" ,
+                        :class-name="'text-info'" , 
                         :icon="'bi-check-circle-fill'">
                     </formtextarea>
 
