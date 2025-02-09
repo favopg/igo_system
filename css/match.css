@@ -16,6 +16,7 @@
     #sidebar.active {
         left: 0;
     }
+    /**
     #overlay {
         display: none;
         position: fixed;
@@ -29,6 +30,7 @@
     #overlay.active {
         display: block;
     }
+    */
 }
 .content-wrapper {
     min-height: 100vh;

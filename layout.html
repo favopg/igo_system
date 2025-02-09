@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>対戦一覧</title>
+    <title>対戦登録</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="css/match.css">
@@ -14,17 +14,18 @@
     <div class="d-flex">
         <!-- サイドバー -->
         <nav id="sidebar" class="bg-dark text-white p-3">
-            <navi_sideber activekbn="1"></navi_sideber>
+            <navi_sideber activekbn="2"></navi_sideber>
         </nav>
 
-        <!-- オーバーレイ -->
+        <!-- オーバーレイ 
         <div id="overlay"></div>
-
+        -->
+        
         <!-- メインコンテンツ -->
         <div class="flex-grow-1 content-wrapper">
             <!-- ヘッダー -->
             <header class="bg-info text-white p-3 d-flex justify-content-between align-items-center">
-                <h2>対戦一覧</h2>
+                <h2>対戦登録</h2>
                 <button class="btn btn-light d-md-none" id="sidebarToggle">
                     <i class="bi bi-list"></i>
                 </button>
@@ -32,21 +33,19 @@
 
             <!-- コンテンツ -->
             <main id="content" class="p-4">
-                <!-- 削除ボタンとモーダル呼び出しのサンプル 
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirmModal">
-                    削除
-                </button>
 
-                <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+                <!-- モーダル呼び出しのサンプル 
+                <div id="igo_modal">
                     <modal 
-                        :title="'削除'"
+                        :title="'対戦成績を登録中...'"
                         :detail="'選択した行を削除します。よろしいですか？'"
                         :danger_info = "'いいえ'"
-                        :primary_info = "'はい'">
+                        :primary_info = "'はい'"
+                        :is_confirm = "true">
                     </modal>
                 </div>
                 -->
-                
+
                 <!-- 対戦結果入力フォーム -->
                 <div id="form-input">
                     <forminput v-model="match_info.black_name" 

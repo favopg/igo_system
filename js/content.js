@@ -40,38 +40,48 @@ naviSidever.mount('#sidebar')
 const modal = Vue.createApp({
     data() {
       return {
-        // モーダルのデフォルト情報
-        modalinfo: {
-            title:"削除",
-            detail:"選択した行を削除します。よろしいですか？",
-            dangerinfo:"いいえ",
-            primaryinfo:"はい"
-        }
       };
     },
   });
-  
+
+// 確認用モーダルと処理中のモーダル
 modal.component("modal", {
-    props: ['title', 'detail', 'danger_info', 'primary_info'],
+    props: ['title', 'detail', 'danger_info', 'primary_info', 'is_confirm'],
     template: `
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="confirmModalLabel">{{ title}}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ detail }}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ danger_info }}</button>
-                    <button type="button" class="btn btn-primary">{{ primary_info}}</button>
+        <!-- 処理中の場合はバックグラウンドでモーダルを消せないように設定  -->
+        <div class="modal fade" id="confirmModal" tabindex="-1" :data-bs-backdrop="is_confirm ? null : 'static'" :data-bs-keyboard="is_confirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div :class="is_confirm ? 'modal-dialog' : 'modal-dialog modal-dialog-centered'">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="confirmModalLabel">{{ title}}</h1>
+                        <button type="button" v-if="is_confirm" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <!-- モーダルbody -->
+                    <div class="modal-body">
+                        {{ is_confirm ? detail : '' }}
+                        <!-- 処理中用のスピナー -->
+                        <div v-if="!is_confirm" class="d-flex justify-content-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- モーダルfooter -->
+                    <div class="modal-footer">
+                        <!-- 確認モーダル用のOK,NOボタン -->
+                        <button type="button" v-if="is_confirm" class="btn btn-secondary" data-bs-dismiss="modal">{{ danger_info }}</button>
+                        <button type="button" v-if="is_confirm" class="btn btn-primary">{{ primary_info}}</button>
+                        <!-- 処理中用のプログレスバー -->
+                        <div v-if="!is_confirm" class="progress w-100">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>                
                 </div>
             </div>
         </div>
     `,
   });
-modal.mount('#confirmModal')
+modal.mount('#igo_modal')
 // ここまでモーダル
   
 // ここから入力フォーム
@@ -99,13 +109,48 @@ const formInput = Vue.createApp({
         }
     },
     methods: {
+        // 登録処理
         register() {
-            this.error_info.black_name = "黒番はログインIDか対戦相手のいずれかを入力してください"
-            console.log("黒番の値" + this.match_info.black_name)
-            console.log("白番の値" + this.match_info.white_name)
-            console.log("公開非公開" + this.match_info.public_flag)
+            this.validateForm()
+            /** モーダル呼び出しのサンプル 
+            const modalElement = document.getElementById('confirmModal');
+			// Bootstrap の Modal クラスを初期化
+			const modal = new bootstrap.Modal(modalElement);
+			// モーダルを表示
+			modal.show();
+            */
+        },
+        // バリデーションチェック
+        validateForm() {
+            this.error_info = {
+                black_name: "",
+                white_name: "",
+                result: "",
+                result_link: "",
+                comment: "",
+                match_at:"",
+                public_flag:"0",
+                is_validated: false
+            };
 
-        }
+            // 黒番必須チェック
+            if (this.match_info.black_name.trim() === "") {
+				this.error_info.black_name = "黒番はログインIDか対戦相手を入力してください。";
+				this.error_info.is_validated = true;
+            }
+
+            if (this.error_info.black_name.trim() === "") {
+                // 黒番：20文字チェック
+                if (this.match_info.black_name.length > 20) {
+                    this.error_info.black_name = "黒番は20文字以内で入力してください。";
+                    this.error_info.is_validated = true;
+                }
+            }
+
+            // 白番必須チェック
+            
+
+        },        
     },
 });
 
