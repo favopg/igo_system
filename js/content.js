@@ -46,19 +46,19 @@ const modal = Vue.createApp({
 
 // 確認用モーダルと処理中のモーダル
 modal.component("modal", {
-    props: ['title', 'detail', 'danger_info', 'primary_info', 'is_confirm'],
+    props: ['title', 'detail', 'danger_info', 'primary_info', 'is_confirm', 'modalId'],
     template: `
         <!-- 処理中の場合はバックグラウンドでモーダルを消せないように設定  -->
-        <div class="modal fade" id="confirmModal" tabindex="-1" :data-bs-backdrop="is_confirm ? null : 'static'" :data-bs-keyboard="is_confirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal fade" :id="modalId" tabindex="-1" :data-bs-backdrop="is_confirm ? null : 'static'" :data-bs-keyboard="is_confirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
             <div :class="is_confirm ? 'modal-dialog' : 'modal-dialog modal-dialog-centered'">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="confirmModalLabel">{{ title}}</h1>
+                        <h1 class="modal-title fs-5" :id="(modalId + 'Label')" >{{ title}}</h1>
                         <button type="button" v-if="is_confirm" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <!-- モーダルbody -->
                     <div class="modal-body">
-                        {{ is_confirm ? detail : '' }}
+                        <div v-html="detail"></div>
                         <!-- 処理中用のスピナー -->
                         <div v-if="!is_confirm" class="d-flex justify-content-center">
                             <div class="spinner-border" role="status">
@@ -106,20 +106,36 @@ const formInput = Vue.createApp({
                 comment:"",
                 publicFlag:"0",
                 errorMessage:""
-            }
+            },
         }
     },
     methods: {
         // 登録処理
-        register() {
+        register(modalId) {
             this.validateForm()
-            /** モーダル呼び出しのサンプル 
-            const modalElement = document.getElementById('confirmModal');
-			// Bootstrap の Modal クラスを初期化
-			const modal = new bootstrap.Modal(modalElement);
-			// モーダルを表示
-			modal.show();
-            */
+            if (this.errorInfo.isValidated) {
+                // バリデーションエラー時は後続処理は実施しない
+                return;
+            }
+
+            // モーダルを表示する
+            const modalInfo = showModal(modalId)
+            
+            // APIコール
+            callApi('igo_system', 'POST', this.matchInfo)
+                .then(response => {
+                    if (!response.ok) {
+                        this.errorInfo.errorMessage = 'APIコールエラーが発生しました'
+                    }
+                    closeModal(modalInfo.modalElement, modalInfo.modal)
+                    console.log("エラー", response)
+                })
+                .then(data => {
+                    // 登録完了のモーダルを開く
+                })
+                .then(error => {
+                    closeModal(modalElement, modal)
+                })
         },
         // バリデーションチェック
         validateForm() {
@@ -151,36 +167,6 @@ const formInput = Vue.createApp({
 
             // 白番必須チェック
         },
-        // fetchAPIでServletをコールする
-        callApi(endpoint, method) {
-            fetch(endpoint,{
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body:JSON.stringify(this.input)
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        this.error_info.errorMessage = 'APIコールで失敗しました'
-                        throw new Error('HTTP error ' + response.status);
-                    }
-                        // API返却値(json)を返却する
-                        return response.json();
-                    })
-                .then(data => {
-                    if (data.status === 'success') {
-                        // 処理完了後に完了メッセージをダイアログ表示する
-                    } else {
-                        // 処理完了後にローディング非表示
-                        // errorの場合はエラーメッセージを表示する
-                        this.error_info.errorMessage = data.message
-                    }
-                })
-                .catch(error => {
-                    console.error('エラー:', error);
-                });
-        }
     },
 });
 
@@ -226,3 +212,40 @@ formInput.component('formtextarea',{
 });
 
 formInput.mount("#form-input")
+
+// fetchAPIでServletをコールする
+function callApi(endpoint, method, request) {
+    const fetchData = fetch(endpoint,
+        {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body:JSON.stringify(request)
+        }
+    )
+    return fetchData
+}
+
+// モーダルを閉じる
+function closeModal(modalElement, modal) {
+    modalElement.addEventListener('shown.bs.modal', function () {
+        modal.hide();
+    });
+}
+
+// モーダルを表示する
+function showModal(modalId) {
+    /** モーダルDOM */
+    const modalElement = document.getElementById(modalId)
+    // BootstrapのModalクラスを初期化
+    const modal = new bootstrap.Modal(modalElement)
+    // モーダルを表示
+    modal.show()
+
+    return {
+        modalElement: modalElement,
+        modal : modal
+    }
+    
+}

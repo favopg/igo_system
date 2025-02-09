@@ -34,18 +34,26 @@
             <!-- コンテンツ -->
             <main id="content" class="p-4">
 
-                <!-- モーダル呼び出しのサンプル 
+                <!-- モーダル呼び出しのサンプル -->
                 <div id="igo_modal">
                     <modal 
                         :title="'対戦成績を登録中...'"
-                        :detail="'選択した行を削除します。よろしいですか？'"
-                        :danger_info = "'いいえ'"
-                        :primary_info = "'はい'"
-                        :is_confirm = "true">
+                        :detail="''"
+                        :danger_info = "''"
+                        :primary_info = "''"
+                        :is_confirm = "false"
+                        :modal-id = "'registerModal'">
+                    </modal>
+                    <modal 
+                        :title="'対戦成績登録完了'"
+                        :detail="'登録完了しました。<br>登録を続ける場合は「はい」を押してください'"
+                        :danger_info = "'はい'"
+                        :primary_info = "'いいえ'"
+                        :is_confirm = "true"
+                        :modal-id = "'confirmModal'">
                     </modal>
                 </div>
-                -->
-
+                
                 <!-- 対戦結果入力フォーム -->
                 <div id="form-input">
                     <!-- APIコールエラーメッセージ表示 -->
@@ -130,7 +138,7 @@
 
                     <!-- 登録ボタン押下後にバリデーションチェックを行う -->
                     <div>
-                        <button type="button" class="btn btn-primary" @click="register">登録</button>
+                        <button type="button" class="btn btn-primary" @click="register('registerModal')">登録</button>
                     </div>
                 </div>
             </main>
