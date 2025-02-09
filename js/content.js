@@ -46,7 +46,7 @@ const modal = Vue.createApp({
 
 // 確認用モーダルと処理中のモーダル
 modal.component("modal", {
-    props: ['title', 'detail', 'danger_info', 'primary_info', 'is_confirm', 'modalId'],
+    props: ['title', 'detail', 'dangerInfo', 'primaryInfo', 'isConfirm', 'modalId', 'screenId'],
     template: `
         <!-- 処理中の場合はバックグラウンドでモーダルを消せないように設定  -->
         <div class="modal fade" :id="modalId" tabindex="-1" :data-bs-backdrop="is_confirm ? null : 'static'" :data-bs-keyboard="is_confirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -70,7 +70,7 @@ modal.component("modal", {
                     <div class="modal-footer">
                         <!-- 確認モーダル用のOK,NOボタン -->
                         <button type="button" v-if="is_confirm" class="btn btn-secondary" data-bs-dismiss="modal">{{ danger_info }}</button>
-                        <button type="button" v-if="is_confirm" class="btn btn-primary">{{ primary_info}}</button>
+                        <button type="button" v-if="is_confirm" class="btn btn-primary" @click="changeScreen(screenId)" >{{ primary_info}}</button>
                         <!-- 処理中用のプログレスバー -->
                         <div v-if="!is_confirm" class="progress w-100">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
@@ -118,7 +118,7 @@ const formInput = Vue.createApp({
                 return;
             }
 
-            // モーダルを表示する
+            // 登録処理中モーダルを表示する
             const modalInfo = showModal(modalId)
             
             // APIコール
@@ -128,13 +128,16 @@ const formInput = Vue.createApp({
                         this.errorInfo.errorMessage = 'APIコールエラーが発生しました'
                     }
                     closeModal(modalInfo.modalElement, modalInfo.modal)
-                    console.log("エラー", response)
+                    console.log("APIコールエラー", response)
+                    return response.json()
                 })
                 .then(data => {
                     // 登録完了のモーダルを開く
+                    showModal('confirmModal')
                 })
                 .then(error => {
                     closeModal(modalElement, modal)
+                    this.errorInfo.errorMessage = 'システムエラーが発生しました'
                 })
         },
         // バリデーションチェック
@@ -167,6 +170,13 @@ const formInput = Vue.createApp({
 
             // 白番必須チェック
         },
+        // 画面遷移
+        changeScreen(screenId) {
+            if(!screenId) {
+                return;
+            }
+            window.location.href = screenId;
+        }
     },
 });
 
