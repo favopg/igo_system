@@ -49,18 +49,18 @@ modal.component("modal", {
     props: ['title', 'detail', 'dangerInfo', 'primaryInfo', 'isConfirm', 'modalId', 'screenId'],
     template: `
         <!-- 処理中の場合はバックグラウンドでモーダルを消せないように設定  -->
-        <div class="modal fade" :id="modalId" tabindex="-1" :data-bs-backdrop="is_confirm ? null : 'static'" :data-bs-keyboard="is_confirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
-            <div :class="is_confirm ? 'modal-dialog' : 'modal-dialog modal-dialog-centered'">
+        <div class="modal fade" :id="modalId" tabindex="-1" :data-bs-backdrop="isConfirm ? null : 'static'" :data-bs-keyboard="isConfirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
+            <div :class="isConfirm? 'modal-dialog' : 'modal-dialog modal-dialog-centered'">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" :id="(modalId + 'Label')" >{{ title}}</h1>
-                        <button type="button" v-if="is_confirm" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" v-if="isConfirm" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <!-- モーダルbody -->
                     <div class="modal-body">
                         <div v-html="detail"></div>
                         <!-- 処理中用のスピナー -->
-                        <div v-if="!is_confirm" class="d-flex justify-content-center">
+                        <div v-if="!isConfirm" class="d-flex justify-content-center">
                             <div class="spinner-border" role="status">
                                 <span class="visually-hidden">Loading...</span>
                             </div>
@@ -69,10 +69,10 @@ modal.component("modal", {
                     <!-- モーダルfooter -->
                     <div class="modal-footer">
                         <!-- 確認モーダル用のOK,NOボタン -->
-                        <button type="button" v-if="is_confirm" class="btn btn-secondary" data-bs-dismiss="modal">{{ danger_info }}</button>
-                        <button type="button" v-if="is_confirm" class="btn btn-primary" @click="changeScreen(screenId)" >{{ primary_info}}</button>
+                        <button type="button" v-if="isConfirm" class="btn btn-secondary" data-bs-dismiss="modal">{{ dangerInfo }}</button>
+                        <button type="button" v-if="isConfirm" class="btn btn-primary" @click="changeScreen(screenId)" >{{ primaryInfo}}</button>
                         <!-- 処理中用のプログレスバー -->
-                        <div v-if="!is_confirm" class="progress w-100">
+                        <div v-if="!isConfirm" class="progress w-100">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>                
@@ -95,7 +95,7 @@ const formInput = Vue.createApp({
                 resultLink:"",
                 matchAt:"",
                 comment:"",
-                publicFlag:"0"
+                publicFlag:false
             },
             errorInfo: {
                 blackName:"",
@@ -104,7 +104,7 @@ const formInput = Vue.createApp({
                 resultLink:"",
                 matchAt:"",
                 comment:"",
-                publicFlag:"0",
+                publicFlag:false,
                 errorMessage:""
             },
         }
@@ -128,7 +128,7 @@ const formInput = Vue.createApp({
                         this.errorInfo.errorMessage = 'APIコールエラーが発生しました'
                     }
                     closeModal(modalInfo.modalElement, modalInfo.modal)
-                    console.log("APIコールエラー", response)
+                    console.log("API返却値", response)
                     return response.json()
                 })
                 .then(data => {
@@ -136,7 +136,7 @@ const formInput = Vue.createApp({
                     showModal('confirmModal')
                 })
                 .then(error => {
-                    closeModal(modalElement, modal)
+                    closeModal(modalInfo.modalElement, modalInfo.modal)
                     this.errorInfo.errorMessage = 'システムエラーが発生しました'
                 })
         },
@@ -149,7 +149,7 @@ const formInput = Vue.createApp({
                 resultLink: "",
                 comment: "",
                 matchAt:"",
-                publicFlag:"0",
+                publicFlag:false,
                 isValidated: false,
                 errorMessage:""
             };

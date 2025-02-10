@@ -119,13 +119,13 @@
                         :name="publicFlag"
                         :item-name="'公開'" 
                         :label-for="'public'" 
-                        :checked= "matchInfo.publicFlag === '1'">
+                        :checked= "matchInfo.publicFlag === true">
                     </formradio>                    
                     <formradio v-model="matchInfo.publicFlag" 
                         :name="publicFlag" 
                         :item-name="'非公開'" 
                         :label-for="'private'"  
-                        :checked= "matchInfo.publicFlag === '0'">
+                        :checked= "matchInfo.publicFlag === false">
                     </formradio>
 
                     <!-- コメント -->
