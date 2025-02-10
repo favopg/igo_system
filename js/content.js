@@ -47,6 +47,15 @@ const modal = Vue.createApp({
 // 確認用モーダルと処理中のモーダル
 modal.component("modal", {
     props: ['title', 'detail', 'dangerInfo', 'primaryInfo', 'isConfirm', 'modalId', 'screenId'],
+    methods: {
+        // 画面遷移
+        changeScreen(screenId) {
+            console.log('画面遷移',screenId)
+            window.location.href = screenId;
+        },
+        handleClick(info) {
+        }
+    },
     template: `
         <!-- 処理中の場合はバックグラウンドでモーダルを消せないように設定  -->
         <div class="modal fade" :id="modalId" tabindex="-1" :data-bs-backdrop="isConfirm ? null : 'static'" :data-bs-keyboard="isConfirm ? null : false" aria-labelledby="confirmModalLabel" aria-hidden="true">
@@ -70,7 +79,7 @@ modal.component("modal", {
                     <div class="modal-footer">
                         <!-- 確認モーダル用のOK,NOボタン -->
                         <button type="button" v-if="isConfirm" class="btn btn-secondary" data-bs-dismiss="modal">{{ dangerInfo }}</button>
-                        <button type="button" v-if="isConfirm" class="btn btn-primary" @click="changeScreen(screenId)" >{{ primaryInfo}}</button>
+                        <button type="button" v-if="isConfirm" class="btn btn-primary" @click="changeScreen(screenId)">{{ primaryInfo}}</button>
                         <!-- 処理中用のプログレスバー -->
                         <div v-if="!isConfirm" class="progress w-100">
                             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
@@ -132,13 +141,17 @@ const formInput = Vue.createApp({
                     return response.json()
                 })
                 .then(data => {
-                    // 登録完了のモーダルを開く
-                    showModal('confirmModal')
-                })
-                .then(error => {
+                    // モーダルを閉じる
                     closeModal(modalInfo.modalElement, modalInfo.modal)
-                    this.errorInfo.errorMessage = 'システムエラーが発生しました'
                 })
+                .then(()=> {
+                    // 閉じた後に次のモーダルを開く
+                    isHideModal(modalId)
+                }) 
+                .catch(error => {
+                    closeModal(modalInfo.modalElement, modalInfo.modal)
+                    console.error('エラー:', error);
+                });
         },
         // バリデーションチェック
         validateForm() {
@@ -170,13 +183,6 @@ const formInput = Vue.createApp({
 
             // 白番必須チェック
         },
-        // 画面遷移
-        changeScreen(screenId) {
-            if(!screenId) {
-                return;
-            }
-            window.location.href = screenId;
-        }
     },
 });
 
@@ -239,8 +245,12 @@ function callApi(endpoint, method, request) {
 
 // モーダルを閉じる
 function closeModal(modalElement, modal) {
+
     modalElement.addEventListener('shown.bs.modal', function () {
-        modal.hide();
+        // モーダルが開き終わって、2秒後に閉じる
+        setTimeout(function () {
+            modal.hide(); 
+        }, 2000);
     });
 }
 
@@ -256,6 +266,21 @@ function showModal(modalId) {
     return {
         modalElement: modalElement,
         modal : modal
-    }
+    }   
+}
+
+// モーダルが完全に閉じたのを検知してからモーダルを開く
+function isHideModal(modalId) {
+    /** モーダルDOM */
+    const modalElement = document.getElementById(modalId)
+    // BootstrapのModalクラスを初期化
+    const modal = new bootstrap.Modal(modalElement)
     
+    // モーダルの完全に閉じた後に次を処理
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        showModal('confirmModal')
+    }, 
+    { 
+        once: true 
+    })
 }
