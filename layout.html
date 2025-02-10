@@ -116,13 +116,13 @@
                     <!-- ラジオボタン -->
                     <label class="form-label d-block"><i class="me-1 bi-check-circle-fill text-info"></i>公開設定</label>
                     <formradio v-model="matchInfo.publicFlag" 
-                        :name="publicFlag"
+                        :name="'publicFlag'"
                         :item-name="'公開'" 
                         :label-for="'public'" 
                         :checked= "matchInfo.publicFlag === true">
                     </formradio>                    
                     <formradio v-model="matchInfo.publicFlag" 
-                        :name="publicFlag" 
+                        :name="'publicFlag'" 
                         :item-name="'非公開'" 
                         :label-for="'private'"  
                         :checked= "matchInfo.publicFlag === false">
