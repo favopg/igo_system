@@ -55,13 +55,31 @@
                 
                 <div id="matchList" class="table-responsive">
 
-                    <select v-model="displayCount">
-                        <option disabled value="">１ページの表示件数</option>
-                        <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                    </select>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="searchOption">1ページの表示件数</label>
+                                <select v-model="displayCount">
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>        
+                            </div> 
 
+                            <div class="col-4">
+                                <label for="searchOption">選択式検索</label>
+                                <select v-model="selectedKeyWord" @change="searchFilter">
+                                    <option value="1">自分の対戦成績のみ</option>
+                                    <option value="2">公開済のすべての対戦成績</option>
+                                </select>        
+                            </div>
+
+                            <div class="col-4">
+                                <label for="inputKeyword">キーワード検索</label>
+                                <input type="text" v-model="inputKeyword" placeholder="例：黒番の名前">
+                            </div>
+                        </div>
+                    </div>
                     <table class="table table-striped table-sm">
                         <thead>
                             <tr>

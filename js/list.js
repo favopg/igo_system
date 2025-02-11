@@ -26,7 +26,7 @@ const matchList = Vue.createApp({
                   "created_user_id": 14,
                   "comment": "楽しかった！",
                   "id": 1,
-                  "public_flag": 1,
+                  "public_flag": false,
                   "match_at": "2024-11-01"
                 },
                 {
@@ -37,7 +37,7 @@ const matchList = Vue.createApp({
                   "created_user_id": 14,
                   "comment": "良いコメント",
                   "id": 2,
-                  "public_flag": 1,
+                  "public_flag": true,
                   "match_at": "2025-01-19"
                 },
                 {
@@ -48,7 +48,7 @@ const matchList = Vue.createApp({
                   "created_user_id": 14,
                   "comment": "良いコメント",
                   "id": 3,
-                  "public_flag": 1,
+                  "public_flag": true,
                   "match_at": "2025-01-19"
                 },
                 {
@@ -59,14 +59,17 @@ const matchList = Vue.createApp({
                   "created_user_id": 14,
                   "comment": "良いコメント",
                   "id": 4,
-                  "public_flag": 1,
+                  "public_flag": false,
                   "match_at": "2025-01-19"
                 }
             ],
             totalPage:0,
             delCheckList:[],
             displayCount:2,
-            currentPage:1
+            currentPage:1,
+            selectedKeyWord:"1",
+            inputKeyword:"",
+            loginId:14
         };
     },
     computed: {
@@ -75,7 +78,7 @@ const matchList = Vue.createApp({
         },
         // ページ数制御
         calcTotalPageLink() {
-            this.totalPage = Math.ceil(this.records.length / this.displayCount)
+            this.totalPage = Math.ceil(this.searchFilter.length / this.displayCount)
             return this.totalPage
         },
 
@@ -83,7 +86,30 @@ const matchList = Vue.createApp({
         displayMatches() {
             const start = (this.currentPage - 1) * this.displayCount;
             const end = start + this.displayCount;
-            return this.records.slice(start, end);
+            return this.searchFilter.slice(start, end);
+        },
+
+        // キーワード検索を行った後に選択検索を行う
+        searchFilter() {
+            if (this.selectedKeyWord === '1') {
+                // ログインIDと一致するデータのみ表示
+                return this.keywordFilter.filter((record) => record.created_user_id === this.loginId)
+            } 
+            // 公開されているデータのみ表示
+            return this.keywordFilter.filter((record) => record.public_flag === true)
+        },
+
+        // レコード(黒番、白番、対戦日)に対してキーワード検索を行う
+        keywordFilter() {
+            if (!this.inputKeyword) {
+                return this.records
+            }
+            const query = this.inputKeyword.toLowerCase();
+            return this.records.filter((record) => 
+                record.black_name.toLowerCase().includes(query) ||
+                record.white_name.toLowerCase().includes(query) || 
+                record.match_at.toLowerCase().includes(query)
+            )
         },
 
     },
