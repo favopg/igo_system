@@ -197,7 +197,7 @@ formInput.component('forminput',{
         <div v-if="errorMessage" class="text-danger mb-3 bi-x-circle-fill">
             {{ errorMessage }}
         </div>
-    `,  
+    `,          
 });
 
 // ラジオボタン
@@ -217,7 +217,7 @@ formInput.component('formradio',{
 formInput.component('formtextarea',{
     props: ["labelFor", "itemName", "placeholder", "errorMessage", "className", "icon", "modelValue", "rows"],
     template: `
-        <div class="mb-4">
+        <div class="mb-4 col-md-8">
             <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
             <textarea class="form-control" :id="labelFor" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
         </div>
