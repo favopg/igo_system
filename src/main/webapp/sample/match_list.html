@@ -7,104 +7,124 @@
     <title>囲碁対戦管理ダッシュボード</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            padding: 48px 0 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-        }
-
-        @media (max-width: 767.98px) {
-            .sidebar {
-                top: 5rem;
-            }
-        }
-
-        .sidebar-sticky {
-            position: relative;
-            top: 0;
-            height: calc(100vh - 48px);
-            padding-top: .5rem;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-    </style>
+    <link rel="stylesheet" href="css/match.css">
 </head>
 
 <body>
-<div id="app" class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active text-white" href="#">
-                            <i class="bi bi-table me-2"></i>
-                            対戦一覧
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="register.html">
-                            <i class="bi bi-plus-square me-2"></i>
-                            対戦登録
-                        </a>
-                    </li>
-                </ul>
-                <div class="border-top my-3"></div>
-                <ul class="nav flex-column mb-2">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#">
-                            <i class="bi bi-box-arrow-right me-2"></i>
-                            ログアウト
-                        </a>
-                    </li>
-                </ul>
+<div class="d-flex">
+    <!-- サイドバー -->
+    <nav id="sidebar" class="bg-dark text-white p-3">
+        <navi_sideber activekbn="1"></navi_sideber>
+    </nav>
+
+    <div id="igoApp" class="flex-grow-1 content-wrapper">
+        <header class="bg-info text-white p-3 d-flex justify-content-between align-items-center">
+            <h2>対戦成績一覧</h2>
+            <button class="btn btn-light d-md-none" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+        </header>
+        <!-- コンテンツ -->
+        <main id="content" class="p-4">
+
+            <!--
+            <div id="igo_modal">
+                <modal
+                    :title="'削除確認'"
+                    :detail="'選択した行を削除します。よろしいですか？'"
+                    :danger-info = "'いいえ'"
+                    :primary-info = "'はい'"
+                    :is-confirm = "true"
+                    :modal-id = "'confirmModal'"
+                    :screen-id="''"
+                    @custom-event="deleteApi()">
+                </modal>
             </div>
-        </nav>
+            -->
 
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-
-            <!-- Header -->
-            <div class="bg-info text-white p-2 mb-4">
-                <h2 class="h4 mb-0">対戦一覧</h2>
-            </div>
-
-            <!-- Total Score -->
-            <div class="table-responsive mb-1">
+            <!-- 成績のまとめ（？）は不要な気がする
+            <div id="grade" class="table-responsive mb-1">
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th colspan="3" class="text-center bg-light">通算対戦成績</th>
+                        <th colspan="3" class="text-center bg-info-subtle">通算対戦成績</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr>
-                        <td><strong>黒勝利数:</strong> {{ apiResponse.black_victory_cnt}}勝</td>
-                        <td><strong>白勝利数:</strong> {{ apiResponse.white_victory_cnt }}勝</td>
-                        <!--
+                        <td><strong>黒勝利数:</strong> {{ gradeInfo.blackVictory }}勝</td>
+                        <td><strong>白勝利数:</strong> {{ gradeInfo.whiteVictory  }}勝</td>
                         <td><strong>勝率:</strong> {{ winRate }}%</td>
-                        -->
                     </tr>
                     </tbody>
                 </table>
             </div>
+            -->
 
-            <!-- 削除ボタン -->
-            <div class="mb-3">
-                <button class="btn btn-danger" @click="openDeleteModal" :disabled="selectedIds.length === 0">
-                    選択した対戦を削除
-                </button>
-            </div>
+            <div id="matchList" class="table-responsive">
+                <!-- 削除確認モーダル -->
+                <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">削除確認</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                選択した対戦結果を削除します。よろしいですか？
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">いいえ</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="deleteApi()">はい</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- APIコールエラーメッセージ表示 -->
+                <div v-if="errorMessage" class="alert alert-danger" role="alert">
+                    {{ errorMessage }}
+                </div>
 
-            <!-- Game List -->
-            <div class="table-responsive">
+                <div class="container mt-4">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="displayCount" class="mb-2">1ページの表示件数</label>
+                                <select v-model="displayCount" class="form-control" id="displayCount">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="selectedKeyWord" class="mb-2">選択式検索</label>
+                                <select v-model="selectedKeyWord" @change="searchFilter" class="form-control" id="selectedKeyWord">
+                                    <option value="1">自分の対戦成績のみ</option>
+                                    <option value="2">公開済のすべての対戦成績</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="inputKeyword" class="mb-2">キーワード検索</label>
+                                <input type="text" v-model="inputKeyword" placeholder="例：黒番の名前" class="form-control" id="inputKeyword">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 削除ボタン -->
+                <div class="mb-3　mt-3">
+                    <button class="btn btn-danger" @click="openDeleteModal('confirmModal')" :disabled="delCheckList.length === 0" >
+                        選択した対戦を削除
+                    </button>
+                </div>
+
                 <table class="table table-striped table-sm">
                     <thead>
                     <tr>
@@ -120,231 +140,56 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="game in paginatedMatches" :key="game.id">
-                        <td><input type="checkbox" v-model="selectedIds" :value="game.id" /></td>
-                        <td>{{ game.id }}</td>
+                    <!-- <div>Checked names: {{ delCheckList }}</div> -->
+                    <tr v-for="matchInfo in displayMatches" :key="matchInfo.id">
+                        <td><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
+                        <td>{{ matchInfo.id }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, game)">
+                            <button class="btn btn-sm btn-outline-secondary">
                                 <i class="bi bi-pencil"></i>
                             </button>
                         </td>
-                        <td>{{ game.black_name }}</td>
-                        <td>{{ game.white_name }}</td>
-                        <td>{{ game.result }}</td>
+                        <td>{{ matchInfo.black_name }}</td>
+                        <td>{{ matchInfo.white_name }}</td>
+                        <td>{{ matchInfo.result }}</td>
                         <td>
-                            <a :href="game.result_link" target="_blank">棋譜を見る</a>
+                            <a>棋譜を見る</a>
                         </td>
-                        <td>{{ game.match_at }}</td>
-                        <td>{{ game.comment }}</td>
+                        <td>{{ matchInfo.match_at }}</td>
+                        <td>{{ matchInfo.comment }}</td>
                     </tr>
                     </tbody>
                 </table>
+
+                <!-- ページング -->
+                <nav aria-label="Page navigation">;
+                    <ul class="pagination justify-content-center">
+                        <!-- 前へ -->
+                        <li class="page-item" :class="{disabled: currentPage === 1}">
+                            <a class="page-link" @click="prevPage()" href="#">前へ</a>
+                        </li>
+
+                        <!-- ページ遷移 -->
+                        <li v-for="page in calcTotalPageLink" :key="page" class="page-item">
+                            <a class="page-link" @click="pageTransition(page)" href="#">{{ page }}</a>
+                        </li>
+
+                        <!-- 次へ -->
+                        <li class="page-item" :class="{disabled: currentPage === totalPage}">
+                            <a class="page-link" @click="nextPage()" href="#">次へ</a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
-
-            <nav aria-label="Page navigation">;
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" :class="{disabled: currentPage === 1}">
-                        <a class="page-link" href="#" @click="prevPage">前へ</a>
-                    </li>
-                    <li v-for="page in totalPages" :key="page" class="page-item" :class="{active: currentPage === page }">
-                        <a class="page-link" @click="goToPage(page)" href="#">{{ page }}</a>
-                    </li>
-                    <li class="page-item" :class="{disabled: currentPage === totalPages}">
-                        <a class="page-link" href="#" @click="nextPage">次へ</a>
-                    </li>
-                </ul>
-            </nav>
-
-            <!-- Pagination
-            <nav aria-label="Page navigation">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item" :class="{ disabled: currentPage === 1 }">
-                        <a class="page-link" href="#" @click.prevent="changePage(currentPage - 1)">前へ</a>
-                    </li>
-                    <li v-for="page in totalPages" :key="page" class="page-item"
-                        :class="{ active: currentPage === page }">
-                        <a class="page-link" href="#" @click.prevent="changePage(page)">{{ page }}</a>
-                    </li>
-                    <li class="page-item" :class="{ disabled: currentPage === totalPages }">
-                        <a class="page-link" href="#" @click.prevent="changePage(currentPage + 1)">次へ</a>
-                    </li>
-                </ul>
-            </nav>
-            -->
         </main>
     </div>
-
-    <!-- 削除確認モーダル -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">削除確認</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    選択した対戦結果を削除します。よろしいですか？
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">いいえ</button>
-                        <button type="button" class="btn btn-danger" @click="deleteSelected">はい</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue@3.2.31/dist/vue.global.prod.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    const { createApp, ref, computed } = Vue
-    createApp({
-        setup() {
-            var matches = ref([
-                {records:[]}
-            ])
-            var apiResponse = ref(0)
-            const itemsPerPage = 10
-            var currentPage = ref(1)
-            var totalPages = ref()
-            var selectedIds = ref([])
-            /**
-            const itemsPerPage = 10
-            const currentPage = ref(1)
-            const totalPages = computed(() => Math.ceil(matches.records.length / itemsPerPage))
-
-            const paginatedGames = computed(() => {
-                const start = (currentPage.value - 1) * itemsPerPage
-                const end = start + itemsPerPage
-            })
-
-             const changePage = (page) => {
-             if (page >= 1 && page <= totalPages.value) {
-             currentPage.value = page
-             }
-             }
-
-             const totalWins = computed(() => games.value.filter(game => game.result === "黒勝").length)
-             const totalLosses = computed(() => games.value.filter(game => game.result === "白勝").length)
-             const winRate = computed(() => {
-             const total = totalWins.value + totalLosses.value
-             return total > 0 ? ((totalWins.value / total) * 100).toFixed(2) : 0
-             })
-             */
-
-            return {
-                matches,
-                apiResponse,
-                currentPage,
-                totalPages,
-                itemsPerPage,
-                selectedIds
-                /**
-                 paginatedGames,
-                 changePage,
-                 totalWins,
-                 totalLosses,
-                 winRate
-                 */
-            }
-        },
-        methods: {
-            selectMatches() {
-                fetch("igo_system")
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('HTTP error ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        const responseJson = JSON.stringify(data, null, 2);
-                        const parsedData = JSON.parse(responseJson);
-                        //console.log(parsedData);
-                        this.matches.records = parsedData.records;
-                        console.log("配列の値" + JSON.stringify( this.matches.records, null, 2));
-                        this.apiResponse = parsedData;
-
-                        this.totalPages = Math.ceil(this.matches.records.length / this.itemsPerPage);
-                    })
-                    .catch(error => {
-                        console.error("データ取得に失敗しました")
-                    });
-            },
-            nextPage() {
-                if (this.currentPage < this.totalPages) {
-                    this.currentPage++;
-                }
-            },
-            prevPage() {
-                if (this.currentPage > 1) {
-                    this.currentPage--;
-                }
-            },
-            goToPage(page) {
-                this.currentPage = page;
-            },
-            openDeleteModal() {
-                const modal = new bootstrap.Modal(document.getElementById("deleteModal"));
-                modal.show();
-            },
-            deleteSelected() {
-                console.log("削除対象のID:", this.selectedIds);
-                // モーダルを閉じる
-                const modal = bootstrap.Modal.getInstance(document.getElementById("deleteModal"));
-                modal.hide();
-
-                fetch('igo_system',{
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body:JSON.stringify(this.selectedIds)
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('HTTP error ' + response.status);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('削除完了しました');
-                        this.selectMatches();
-                        this.selectedIds = [];
-                    })
-                    .catch(error => {
-                        console.error('エラー:', error);
-                    });
-            },
-            toggleAll(event) {
-                if (event.target.checked) {
-                    this.selectedIds = this.paginatedMatches.map((game) => game.id);
-                } else {
-                    this.selectedIds = [];
-                }
-            },
-            transitionEdit(event, item) {
-                console.log('編集ボタンが押下されました');
-                console.log('セルの値',item.id);
-                window.location.href = `edit.html?id=${item.id}`;
-            },
-        },
-        computed: {
-            paginatedMatches() {
-                const start = (this.currentPage - 1) * this.itemsPerPage;
-                const end = start + this.itemsPerPage;
-                return this.matches.records.slice(start, end);
-            }
-        },
-
-        mounted() {
-            this.selectMatches();
-        }
-    }).mount('#app')
-</script>
+<script src="js/menu.js"></script>
+<script src="js/content.js"></script>
+<script src="js/list.js"></script>
 </body>
-
 </html>
