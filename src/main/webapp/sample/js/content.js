@@ -136,7 +136,6 @@ const formInput = Vue.createApp({
                     if (!response.ok) {
                         this.errorInfo.errorMessage = 'APIコールエラーが発生しました'
                     }
-                    closeModal(modalInfo.modalElement, modalInfo.modal)
                     console.log("API返却値", response)
                     return response.json()
                 })
@@ -146,7 +145,7 @@ const formInput = Vue.createApp({
                 })
                 .then(()=> {
                     // 閉じた後に次のモーダルを開く
-                    isHideModal(modalId)
+                    isHideModal(modalInfo.modalElement, modalInfo.modal)
                 })
                 .catch(error => {
                     closeModal(modalInfo.modalElement, modalInfo.modal)
@@ -250,11 +249,8 @@ function callApi(endpoint, method, request) {
 function closeModal(modalElement, modal) {
 
     modalElement.addEventListener('shown.bs.modal', function () {
-        // モーダルが開き終わって、2秒後に閉じる
-        setTimeout(function () {
-            modal.hide();
-        }, 10000);
-    });
+        modal.hide()
+    })
 }
 
 // モーダルを表示する
@@ -273,17 +269,10 @@ function showModal(modalId) {
 }
 
 // モーダルが完全に閉じたのを検知してからモーダルを開く
-function isHideModal(modalId) {
-    /** モーダルDOM */
-    const modalElement = document.getElementById(modalId)
-    // BootstrapのModalクラスを初期化
-    const modal = new bootstrap.Modal(modalElement)
+function isHideModal(modalElement, modal) {
 
     // モーダルの完全に閉じた後に次を処理
     modalElement.addEventListener('hidden.bs.modal', () => {
             showModal('confirmModal')
-        },
-        {
-            once: true
-        })
+    })
 }

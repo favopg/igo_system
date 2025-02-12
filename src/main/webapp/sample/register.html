@@ -47,7 +47,7 @@
                 </modal>
                 <modal
                         :title="'対戦成績登録完了'"
-                        :detail="'登録完了しました。<br>登録を続ける場合は「はい」を押してください'"
+                        :detail="'登録完了しました。<br>登録を続ける場合は「いいえ」を押してください'"
                         :danger-info = "'いいえ'"
                         :primary-info = "'はい'"
                         :is-confirm = "true"
@@ -116,13 +116,13 @@
                 <!-- ラジオボタン -->
                 <label class="form-label d-block"><i class="me-1 bi-check-circle-fill text-info"></i>公開設定</label>
                 <formradio v-model="matchInfo.publicFlag"
-                           :name="publicFlag"
+                           :name="'publicFlag'"
                            :item-name="'公開'"
                            :label-for="'public'"
                            :checked= "matchInfo.publicFlag === true">
                 </formradio>
                 <formradio v-model="matchInfo.publicFlag"
-                           :name="publicFlag"
+                           :name="'publicFlag'"
                            :item-name="'非公開'"
                            :label-for="'private'"
                            :checked= "matchInfo.publicFlag === false">

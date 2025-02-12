@@ -190,12 +190,4 @@ const matchList = Vue.createApp({
     },
 
 });
-matchList.mount('#igoApp')
-
-
-
-
-
-
-
-
+matchList.mount('#matchList')
