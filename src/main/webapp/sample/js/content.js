@@ -212,7 +212,11 @@ const formInput = Vue.createApp({
                     this.matchInfo.result = parsedData.result
                     this.matchInfo.resultLink = parsedData.result_link
                     this.matchInfo.id = parsedData.id
-                    this.matchInfo.publicFlag = parsedData.public_flag
+                    if (parsedData.public_flag === 0) {
+                        this.matchInfo.publicFlag = false
+                    } else {
+                        this.matchInfo.publicFlag = true
+                    }
                     this.matchInfo.comment = parsedData.comment
                     this.matchInfo.matchAt = parsedData.match_at
 
@@ -258,12 +262,12 @@ const formInput = Vue.createApp({
 });
 
 formInput.component('forminput',{
-    props: ["labelFor", "itemName", "type", "placeholder", "errorMessage", "className", "icon", "modelValue"],
+    props: ["labelFor", "itemName", "type", "placeholder", "errorMessage", "className", "icon", "modelValue", "value"],
     template: `
         <div id="form-input" class="mb-1 col-md-8">
             <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
             <input :type="type" class="form-control" :id="labelFor" :placeholder="placeholder" 
-            @input="$emit('update:modelValue', $event.target.value)">
+            @input="$emit('update:modelValue', $event.target.value)" :value = "value">
         </div>
         <div v-if="errorMessage" class="text-danger mb-3 bi-x-circle-fill">
             {{ errorMessage }}
@@ -286,11 +290,11 @@ formInput.component('formradio',{
 
 // テキストエリア
 formInput.component('formtextarea',{
-    props: ["labelFor", "itemName", "placeholder", "errorMessage", "className", "icon", "modelValue", "rows"],
+    props: ["labelFor", "itemName", "placeholder", "errorMessage", "className", "icon", "modelValue", "rows", "value"],
     template: `
         <div class="mb-4 col-md-8">
             <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
-            <textarea class="form-control" :id="labelFor" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
+            <textarea class="form-control" :id="labelFor" :value="value" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
         </div>
         <div v-if="errorNassage" class="text-danger mb-3 bi-x-circle-fill">
             {{ errorMessage  }}

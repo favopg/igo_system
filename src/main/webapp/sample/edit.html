@@ -58,8 +58,6 @@
 
 			<!-- 対戦結果入力フォーム -->
 			<div id="form-input">
-				{{ matchInfo.result }}
-				html
 				<!-- APIコールエラーメッセージ表示 -->
 				<div v-if="errorInfo.errorMessage" class="alert alert-danger" role="alert">
 					{{ errorInfo.errorMessage }}
@@ -72,7 +70,8 @@
 						   :placeholder="'例：ログインID'" ,
 						   :error-message="errorInfo.blackName" ,
 						   :class-name="'text-danger'" ,
-						   :icon="'bi bi-exclamation-circle-fill'">
+						   :icon="'bi bi-exclamation-circle-fill'" ,
+						   :value="matchInfo.blackName" >
 				</forminput>
 
 				<forminput v-model="matchInfo.whiteName"
@@ -82,7 +81,8 @@
 						   :placeholder="'例：対局相手'" ,
 						   :error-message="errorInfo.whiteName" ,
 						   :class-name="'text-danger'" ,
-						   :icon="'bi bi-exclamation-circle-fill'">
+						   :icon="'bi bi-exclamation-circle-fill'" ,
+						   :value="matchInfo.whiteName">
 				</forminput>
 
 				<forminput v-model="matchInfo.result"
@@ -92,7 +92,8 @@
 						   :placeholder="'例：黒6目半勝ち'" ,
 						   :error-message="errorInfo.result" ,
 						   :class-name="'text-danger'" ,
-						   :icon="'bi bi-exclamation-circle-fill'">
+						   :icon="'bi bi-exclamation-circle-fill'" ,
+						   :value="matchInfo.result">
 				</forminput>
 
 				<forminput v-model="matchInfo.resultLink"
@@ -102,7 +103,8 @@
 						   :placeholder="'例：https://gokifu.net/kifutweet2.php'" ,
 						   :error-message="errorInfo.resultLink" ,
 						   :class-name="'text-info'" ,
-						   :icon="'bi-check-circle-fill'">
+						   :icon="'bi-check-circle-fill'" ,
+						   :value="matchInfo.resultLink">
 				</forminput>
 
 				<forminput v-model="matchInfo.matchAt"
@@ -112,7 +114,8 @@
 						   :placeholder="'例：2025/01/01'" ,
 						   :error-message="errorInfo.matchAt" ,
 						   :class-name="'text-info'" ,
-						   :icon="'bi-check-circle-fill'">
+						   :icon="'bi-check-circle-fill'" ,
+						   :value="matchInfo.matchAt">
 				</forminput>
 
 				<!-- ラジオボタン -->
@@ -121,13 +124,15 @@
 						   :name="'publicFlag'"
 						   :item-name="'公開'"
 						   :label-for="'public'"
-						   :checked= "matchInfo.publicFlag === true">
+						   :checked= "matchInfo.publicFlag === true"
+						   :value="matchInfo.publicFlag">
 				</formradio>
 				<formradio v-model="matchInfo.publicFlag"
 						   :name="'publicFlag'"
 						   :item-name="'非公開'"
 						   :label-for="'private'"
-						   :checked= "matchInfo.publicFlag === false">
+						   :checked= "matchInfo.publicFlag === false"
+						   :value="matchInfo.publicFlag">
 				</formradio>
 
 				<!-- コメント -->
@@ -137,7 +142,8 @@
 							  :placeholder="'上手く打たれたけど、満足できる１局だった'" ,
 							  :error-message="errorInfo.comment" ,
 							  :class-name="'text-info'" ,
-							  :icon="'bi-check-circle-fill'">
+							  :icon="'bi-check-circle-fill'"
+							  :value="matchInfo.comment">
 				</formtextarea>
 
 				<!-- 更新ボタン押下後にバリデーションチェックを行う -->
