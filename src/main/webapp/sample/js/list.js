@@ -1,67 +1,8 @@
-// ここからモーダル部品
-const grade = Vue.createApp({
-    data() {
-        return {
-            gradeInfo: {
-                blackVictory: '10',
-                whiteVictory: '20'
-            },
-        };
-    },
-
-});
-grade.mount('#grade')
-
-
 // ここから対戦一覧部品
 const matchList = Vue.createApp({
     data() {
         return {
             records: [
-                {
-                    "black_name": "イッシー",
-                    "result": "白中押勝ち",
-                    "result_link": "https://gokifu.net/t2.php?s=4481733974860716",
-                    "white_name": "木部夏生",
-                    "created_user_id": 14,
-                    "comment": "楽しかった！",
-                    "id": 1,
-                    "public_flag": false,
-                    "match_at": "2024-11-01"
-                },
-                {
-                    "black_name": "ロボット",
-                    "result": "黒勝ち",
-                    "result_link": "https://gokifu.net/t2.php?s=2391735432155926",
-                    "white_name": "イッシー",
-                    "created_user_id": 14,
-                    "comment": "良いコメント",
-                    "id": 2,
-                    "public_flag": true,
-                    "match_at": "2025-01-19"
-                },
-                {
-                    "black_name": "ロボット",
-                    "result": "黒勝ち",
-                    "result_link": "https://gokifu.net/t2.php?s=2391735432155926",
-                    "white_name": "イッシー",
-                    "created_user_id": 14,
-                    "comment": "良いコメント",
-                    "id": 3,
-                    "public_flag": true,
-                    "match_at": "2025-01-19"
-                },
-                {
-                    "black_name": "ロボット",
-                    "result": "黒勝ち",
-                    "result_link": "https://gokifu.net/t2.php?s=2391735432155926",
-                    "white_name": "イッシー",
-                    "created_user_id": 14,
-                    "comment": "良いコメント",
-                    "id": 4,
-                    "public_flag": false,
-                    "match_at": "2025-01-19"
-                }
             ],
             totalPage:0,
             delCheckList:[],
@@ -69,8 +10,8 @@ const matchList = Vue.createApp({
             currentPage:1,
             selectedKeyWord:"1",
             inputKeyword:"",
-            loginId:14,
-            errorMessage: ""
+            loginId:1,
+            errorMessage: "",
         };
     },
     computed: {
@@ -147,9 +88,10 @@ const matchList = Vue.createApp({
                     return response.json()
                 })
                 .then(data => {
-                    const responseJson = JSON.stringify(data, null, 2);
-                    const parsedData = JSON.parse(responseJson);
-                    this.records = parsedData.records;
+                    const responseJson = JSON.stringify(data, null, 2)
+                    const parsedData = JSON.parse(responseJson)
+                    this.records = parsedData.records
+                    this.loginId = parsedData.login_id
                 })
                 .catch(error => {
                     console.log("エラーです")
@@ -181,7 +123,14 @@ const matchList = Vue.createApp({
                 .catch(error => {
                     this.errorMessage = 'システムエラーが発生しました'
                 });
-        }
+        },
+
+        transitionEdit(event, item) {
+            console.log('編集ボタンが押下されました');
+            console.log('セルの値',item.id);
+            window.location.href = `edit.html?id=${item.id}`;
+        },
+
 
     },
     mounted() {

@@ -24,6 +24,7 @@ public class MatchForm {
 	private boolean publicFlag = false;
 
 	private int createdUserId = 0;
+	private int id= 0;
 
 	public String getBlackName() {
 		return blackName;
@@ -89,6 +90,15 @@ public class MatchForm {
 		this.createdUserId = createdUserId;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
 	@Override
 	public String toString() {
 		return "MatchForm{" +
@@ -100,6 +110,7 @@ public class MatchForm {
 				", matchAt=" + matchAt +
 				", publicFlag=" + publicFlag +
 				", createdUserId=" + createdUserId +
+				", id=" + id +
 				"}";
 	}
 }

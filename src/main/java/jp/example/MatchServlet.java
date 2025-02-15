@@ -141,6 +141,46 @@ public class MatchServlet extends HttpServlet {
     }
 
     @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse res) {
+        // register.htmlから登録ボタン押下時に呼ばれる
+        try {
+            res.setContentType("text/html; charset=UTF-8");
+            res.setCharacterEncoding("UTF-8");
+            // リクエスト情報変換
+            MatchForm form = ServletUtil.convertFormFromJson(req, MatchForm.class);
+            logger.debug("対戦結果更新APIの変換後データ{}", form.toString());
+
+            // セッション情報が取れない場合はAPIエラーとして返却する
+            HttpSession session = req.getSession(false);
+            if (req.getSession() == null) {
+                throw new RuntimeException("セッション情報取得でエラー発生");
+            }
+
+            // バリデーションチェック
+            JSONObject validateResponse = ValidateUtil.validate(form);
+            if (validateResponse.optString(ApiResponse.STATUS.getCode()).equals(ApiResponse.NG.getCode())) {
+                ServletUtil.apiResponse(res, validateResponse);
+                logger.debug("対戦結果更新APIのバリデーションチェックエラー{}", validateResponse.toString());
+                return;
+            }
+
+            SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+            logger.debug("セッション情報{}",sessionInfo.toString());
+
+            // 対戦更新処理
+            MatchService service = new MatchService();
+            JSONObject response = service.update(form, sessionInfo);
+
+            ServletUtil.apiResponse(res, response);
+
+        } catch (Exception e) {
+            logger.debug("対戦更新処理でエラー発生");
+            logger.error(e.getMessage(), e);
+            execError(res);
+        }
+    }
+
+    @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse res) {
         try {
             res.setContentType("text/html; charset=UTF-8");

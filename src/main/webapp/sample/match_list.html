@@ -145,7 +145,7 @@
                         <td><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
                         <td>{{ matchInfo.id }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-secondary">
+                            <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, matchInfo)">
                                 <i class="bi bi-pencil"></i>
                             </button>
                         </td>
@@ -153,7 +153,7 @@
                         <td>{{ matchInfo.white_name }}</td>
                         <td>{{ matchInfo.result }}</td>
                         <td>
-                            <a>棋譜を見る</a>
+                            <a :href="matchInfo.result_link" target="_blank">棋譜を見る</a>
                         </td>
                         <td>{{ matchInfo.match_at }}</td>
                         <td>{{ matchInfo.comment }}</td>

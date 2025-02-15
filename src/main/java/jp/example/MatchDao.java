@@ -28,4 +28,8 @@ public interface MatchDao {
 
     @BatchDelete
     public int[] deleteMatch(List<MatchEntity> matchEntityList);
+
+    @Update
+    public int updateMatch(MatchEntity entity);
+
 }

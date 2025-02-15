@@ -13,12 +13,12 @@ naviSidever.component("navi_sideber", {
     		<h3 class="text-white mb-4">メニュー</h3>
               <ul class="nav flex-column mb-auto nav-pills">
             		<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white" :class="activekbn === '1' ? 'active':'' ">
+                    	<a href="match_list.html" class="nav-link text-white" :class="activekbn === '1' ? 'active':'' ">
                         	<i class="bi bi-list-ul me-2"></i>対戦一覧
                     	</a>
                 	</li>
                 	<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white" :class="activekbn === '2' ? 'active':'' ">
+                    	<a href="register.html" class="nav-link text-white" :class="activekbn === '2' ? 'active':'' ">
                         	<i class="bi bi-plus-circle me-2"></i>対戦登録
                     	</a>
                 	</li>
@@ -104,7 +104,8 @@ const formInput = Vue.createApp({
                 resultLink:"",
                 matchAt:"",
                 comment:"",
-                publicFlag:false
+                publicFlag:false,
+                id:0
             },
             errorInfo: {
                 blackName:"",
@@ -116,6 +117,7 @@ const formInput = Vue.createApp({
                 publicFlag:false,
                 errorMessage:""
             },
+            updateInfo: {}
         }
     },
     methods: {
@@ -152,6 +154,74 @@ const formInput = Vue.createApp({
                     console.error('エラー:', error);
                 });
         },
+
+        // 更新処理
+        update(modalId) {
+            this.validateForm()
+            if (this.errorInfo.isValidated) {
+                // バリデーションエラー時は後続処理は実施しない
+                return;
+            }
+
+            // 登録処理中モーダルを表示する
+            const modalInfo = showModal(modalId)
+
+            // APIコール
+            callApi('igo_system', 'PUT', this.matchInfo)
+                .then(response => {
+                    if (!response.ok) {
+                        this.errorInfo.errorMessage = 'APIコールエラーが発生しました'
+                    }
+                    console.log("API返却値", response)
+                    return response.json()
+                })
+                .then(data => {
+                    // モーダルを閉じる
+                    closeModal(modalInfo.modalElement, modalInfo.modal)
+                })
+                .then(()=> {
+                    // 閉じた後に次のモーダルを開く
+                    isHideModal(modalInfo.modalElement, modalInfo.modal)
+                })
+                .catch(error => {
+                    closeModal(modalInfo.modalElement, modalInfo.modal)
+                    console.error('エラー:', error);
+                });
+        },
+
+        selectMatch() {
+            const urlParams = new URLSearchParams(window.location.search);
+            console.log("値チェック" + urlParams.get("id"))
+            console.log("値チェック" + urlParams.has("id"))
+
+            if(!urlParams.has("id")) {
+                return;
+            }
+            fetch("igo_system/refer?" + urlParams.toString())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('HTTP error ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const responseJson = JSON.stringify(data, null, 2);
+                    const parsedData = JSON.parse(responseJson);
+                    this.matchInfo.blackName = parsedData.black_name
+                    this.matchInfo.whiteName = parsedData.white_name
+                    this.matchInfo.result = parsedData.result
+                    this.matchInfo.resultLink = parsedData.result_link
+                    this.matchInfo.id = parsedData.id
+                    this.matchInfo.publicFlag = parsedData.public_flag
+                    this.matchInfo.comment = parsedData.comment
+                    this.matchInfo.matchAt = parsedData.match_at
+
+                })
+                .catch(error => {
+                    console.error("データ取得に失敗しました")
+                })
+        },
+
         // バリデーションチェック
         validateForm() {
             this.errorInfo = {
@@ -179,10 +249,12 @@ const formInput = Vue.createApp({
                     this.errorInfo.isValidated = true;
                 }
             }
-
             // 白番必須チェック
         },
     },
+    mounted() {
+        this.selectMatch()
+    }
 });
 
 formInput.component('forminput',{

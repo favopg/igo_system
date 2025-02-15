@@ -88,6 +88,7 @@ public class MatchService {
 		response.put("records", jsonArray);
 		response.put("black_victory_cnt", blackVictoryList.size());
 		response.put("white_victory_cnt", whiteVictoryList.size());
+		response.put("login_id", userId);
 		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
 		return response;
 	}
@@ -127,6 +128,48 @@ public class MatchService {
 		if (dao.insertMatch(entity) != 1) {
 			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
 			response.put("message", "対戦成績登録処理で失敗しました");
+			return response;
+		}
+
+		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
+		return response;
+	}
+
+	/**
+	 * 入力情報から、対戦テーブルに対戦情報を登録します。<br>
+	 * {@link MatchDao#updateMatch(MatchEntity)}
+	 * @param inputData 入力された対戦情報
+	 * @param sessionInfo セッション情報のユーザ名
+	 * @return APIレスポンスを詰めた　JSONObject
+	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
+	 */
+	public JSONObject update(MatchForm inputData, SessionInfo sessionInfo) {
+
+		JSONObject response = new JSONObject();
+
+		String userName = sessionInfo.getName();
+
+		// 黒番、白番のどちらかにログインユーザが含まれているかチェックする
+		if (!inputData.getBlackName().equals(userName) && !inputData.getWhiteName().equals(userName) ) {
+			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+			response.put("message", "黒番、白番のいずれかが登録されていないユーザです。ご確認ください");
+			return response;
+		}
+
+		// 入力値をエンティティに変換
+		MatchEntity entity = new MatchEntity();
+		try {
+			BeanUtils.copyProperties(entity, inputData);
+		} catch (IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
+		// 作成ユーザIDにログインユーザIDを設定
+		entity.setCreatedUserId(sessionInfo.getUserId());
+
+		// 登録処理
+		if (dao.updateMatch(entity) != 1) {
+			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+			response.put("message", "対戦成績更新処理で失敗しました");
 			return response;
 		}
 
