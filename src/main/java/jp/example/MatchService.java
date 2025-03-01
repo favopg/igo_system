@@ -64,6 +64,18 @@ public class MatchService {
 			return dao.selectFindByUserId(userId);
 		});
 
+		matchMapList.forEach(map -> {
+			if (map.containsKey("public_flag")) {
+				System.out.println(map.get("public_flag").toString());
+				if (map.get("public_flag").toString().equals("1")) {
+					map.put("public_flag", true);
+				} else {
+					map.put("public_flag", false);
+				}
+			}
+		});
+
+
 		// 検索結果から黒の勝利数を集計
 		List<Map<String, Object>> blackVictoryList = matchMapList.stream()
 				.filter(row -> row.get("result") != null &&
