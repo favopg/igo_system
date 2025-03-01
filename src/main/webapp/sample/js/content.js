@@ -1,41 +1,3 @@
-// ここからはメニュー部分
-const naviSidever = Vue.createApp({
-    data() {
-        return {
-        };
-    },
-});
-
-naviSidever.component("navi_sideber", {
-    props: ['activekbn'],
-    template: `
-		<div class="sidebar-content">
-    		<h3 class="text-white mb-4">メニュー</h3>
-              <ul class="nav flex-column mb-auto nav-pills">
-            		<li class="nav-item mb-2">
-                    	<a href="match_list.html" class="nav-link text-white" :class="activekbn === '1' ? 'active':'' ">
-                        	<i class="bi bi-list-ul me-2"></i>対戦一覧
-                    	</a>
-                	</li>
-                	<li class="nav-item mb-2">
-                    	<a href="register.html" class="nav-link text-white" :class="activekbn === '2' ? 'active':'' ">
-                        	<i class="bi bi-plus-circle me-2"></i>対戦登録
-                    	</a>
-                	</li>
-                	<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white" :class="activekbn === '3' ? 'active':'' ">
-                        	<i class="bi bi-file-earmark-arrow-up me-2"></i>CSV取込
-                    	</a>
-                	</li>
-            	</ul>
-    	</div>
-    	<button class="btn btn-danger w-100">
-            <i class="bi bi-box-arrow-right me-2"></i>ログアウト
-      </button>
-	`,
-});
-naviSidever.mount('#sidebar')
-
 // ここからモーダル部品
 const modal = Vue.createApp({
     data() {
@@ -117,7 +79,6 @@ const formInput = Vue.createApp({
                 publicFlag:false,
                 errorMessage:""
             },
-            updateInfo: {}
         }
     },
     methods: {
@@ -261,13 +222,14 @@ const formInput = Vue.createApp({
     }
 });
 
+
 formInput.component('forminput',{
-    props: ["labelFor", "itemName", "type", "placeholder", "errorMessage", "className", "icon", "modelValue", "value"],
+    props: ["labelFor", "itemName", "type", "placeholder", "errorMessage", "className", "icon", "modelValue"],
     template: `
         <div id="form-input" class="mb-1 col-md-8">
             <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
             <input :type="type" class="form-control" :id="labelFor" :placeholder="placeholder" 
-            @input="$emit('update:modelValue', $event.target.value)" :value = "value">
+            @input="$emit('update:modelValue', $event.target.value)">
         </div>
         <div v-if="errorMessage" class="text-danger mb-3 bi-x-circle-fill">
             {{ errorMessage }}
@@ -280,7 +242,7 @@ formInput.component('formradio',{
     props: ["labelFor", "itemName", "checked", "value", "name"],
     template: `
         <div class="form-check form-check-inline mb-3">
-            <input :id="labelFor" class="form-check-input" :name="name" type="radio" :checked ="checked" :value="value">
+            <input :id="labelFor" class="form-check-input" :name="name" type="radio" :checked ="checked">
             <label :for="labelFor" class="form-check-label">
                 {{ itemName }}
             </label>
@@ -290,11 +252,11 @@ formInput.component('formradio',{
 
 // テキストエリア
 formInput.component('formtextarea',{
-    props: ["labelFor", "itemName", "placeholder", "errorMessage", "className", "icon", "modelValue", "rows", "value"],
+    props: ["labelFor", "itemName", "placeholder", "errorMessage", "className", "icon", "modelValue", "rows"],
     template: `
         <div class="mb-4 col-md-8">
             <label :for="labelFor" class="form-label"><i class="me-1" :class="[className,icon]"></i>{{ itemName }}</label>
-            <textarea class="form-control" :id="labelFor" :value="value" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
+            <textarea class="form-control" :id="labelFor" :rows="rows" :placeholder="placeholder" @input="$emit('update:modelValue', $event.target.value)"></textarea>
         </div>
         <div v-if="errorNassage" class="text-danger mb-3 bi-x-circle-fill">
             {{ errorMessage  }}
@@ -320,6 +282,25 @@ function callApi(endpoint, method, request) {
     )
     return fetchData
 }
+
+async function selectMatch() {
+    const urlParams = new URLSearchParams(window.location.search);
+    console.log("値チェック" + urlParams.get("id"))
+    console.log("値チェック" + urlParams.has("id"))
+
+    if(!urlParams.has("id")) {
+        return;
+    }
+    try {
+        const response = await fetch("igo_system/refer?" + urlParams.toString())
+        const data = await response.json()
+        return data
+    } catch (error) {
+        console.error('更新情報取得APIでシステムエラー', error);
+        return '';
+    }
+}
+
 
 // モーダルを閉じる
 function closeModal(modalElement, modal) {
