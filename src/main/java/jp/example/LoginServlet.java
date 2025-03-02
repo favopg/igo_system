@@ -14,9 +14,13 @@ import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@WebServlet("/sample/login")
+@WebServlet(urlPatterns = {"/sample/login", "/sample/login/register"})
 public class LoginServlet extends HttpServlet {
+
+	private static final Logger logger = LoggerFactory.getLogger(LoginServlet.class);
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
@@ -36,41 +40,39 @@ public class LoginServlet extends HttpServlet {
 			break;
 			
 			default :
-				//registUser(req, res);
-				System.out.println("デフォルトは何もしない");
+				register(req, res);
 			break;
 		}
 		
 	}
+
 	/**
-	private void registUser(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		
-		// JSONデータを読み取る
-        StringBuilder jsonData = new StringBuilder();
-        try (BufferedReader reader = req.getReader()) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                jsonData.append(line);
-            }
-        }
-        
-        ObjectMapper mapper = new ObjectMapper();
-        UserForm uf = mapper.readValue(jsonData.toString(), UserForm.class);
+	 * ログイン情報登録
+	 * @param req リクエスト
+	 * @param res レスポンス
+	 */
+	private void register(HttpServletRequest req, HttpServletResponse res) {
+		try {
+			// JSONデータ取得
+			UserForm userForm = ServletUtil.convertFormFromJson(req, UserForm.class);
+			// 登録
+			UserService userService = new UserService();
+			userService.registerUser(userForm);
 
-        
-		
+			JSONObject response = new JSONObject();
+			response.put("status", "success");
+			response.put("message", "ログイン画面に返却します");
 
-		JSONObject response = new JSONObject();
-		response.put("status", "success");
-		response.put("message", "ログイン画面に返却します");
+			// JSONデータを返却
+			PrintWriter out = res.getWriter();
+			out.print(response.toString());
+			out.flush();
 
-		// JSONデータを返却
-		PrintWriter out = res.getWriter();
-		out.print(response.toString());
-		out.flush();
-			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			execError(res);
+		}
 	}
-	*/
 
 	private void login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		res.setContentType("text/html; charset=UTF-8");
@@ -110,4 +112,21 @@ public class LoginServlet extends HttpServlet {
 		out.flush();
 			
 	}
+
+	private void execError(HttpServletResponse res) {
+		try {
+			PrintWriter out = res.getWriter();
+			JSONObject response = new JSONObject();
+			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+			response.put("message", "システムエラーが発生しました");
+
+			out.print(response.toString());
+			out.flush();
+			logger.error("APIエラーレスポンス{}", response.toString());
+			logger.error("ログインAPIでエラーが発生しました");
+		} catch (Exception e) {
+			throw new RuntimeException("ここでエラー起きたらもうおしまいだよ");
+		}
+	}
+
 }

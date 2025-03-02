@@ -35,97 +35,105 @@
             text-align: right;
             margin-top: 1rem;
         }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
     </style>
 </head>
 <body>
-    <div id="app">
-        <!-- ヘッダー -->
-        <header class="header">
-            <div class="container">
-                <h1 class="h3 mb-0">囲碁対戦成績管理</h1>
-            </div>
-        </header>
+<div id="app">
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1 class="h3 mb-0">囲碁対戦成績管理</h1>
+        </div>
+    </header>
 
-        <!-- メインコンテンツ -->
-        <main class="container">
-            <div class="login-form">
-                <form @submit.prevent="login">
-                    <div class="mb-3">
-                        <h5>{{ message}}</h5>
-                        <label for="loginId" class="form-label">ログインID</label>
-                        <input 
-                            type="text" 
-                            class="form-control login-id" 
-                            id="loginId" 
+    <!-- メインコンテンツ -->
+    <main class="container">
+        <div class="login-form">
+            <form @submit.prevent="login">
+                <div class="mb-3">
+                    <h5>{{ message}}</h5>
+                    <label for="loginId" class="form-label">ログインID</label>
+                    <input
+                            type="text"
+                            class="form-control login-id"
+                            id="loginId"
                             v-model="input.name"
                             required
-                        >
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">パスワード</label>
-                        <input 
-                            type="password" 
-                            class="form-control login-password" 
-                            id="password" 
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">パスワード</label>
+                    <input
+                            type="password"
+                            class="form-control login-password"
+                            id="password"
                             v-model="input.password"
                             required
-                        >
-                    </div>
-                    <div class="btn-wrapper">
-                        <button 
-                            type="submit" 
+                    >
+                </div>
+                <div class="btn-wrapper">
+                    <button
+                            type="submit"
                             class="btn btn-primary"
-                        >
-                            ログイン
-                        </button>
-                    </div>
-                </form>
+                    >
+                        ログイン
+                    </button>
+                </div>
+            </form>
+            <div class="register-link">
+                <p>アカウントをお持ちでない方は<a href="login_register.html">こちら</a>から登録してください。</p>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
 
-    <script>
-        const app = Vue.createApp({
-            data() {
-                return {
-                    input:{
-                        name: '',
-                        password: ''
-                    },
-                    message:''
-                }
-            },
-            methods: {
-                login() {
-					fetch('login',{
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body:JSON.stringify(this.input)
-                    })
-						.then(response => {
-							if (!response.ok) {
-								throw new Error('HTTP error ' + response.status);
-							}
-							return response.json();
-						})
-						.then(data => {
-                            if (data.status === "error") {
-                                this.message = 'ログインIDかパスワードのいずれかが間違っています。'                     
-                            } else {
-                                window.location.href = 'match_list.html';
-                            }
-						})
-						.catch(error => {
-							console.error('エラー:', error);
-						});
-                }
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                input:{
+                    name: '',
+                    password: ''
+                },
+                message:''
             }
-        });
+        },
+        methods: {
+            login() {
+                fetch('login',{
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body:JSON.stringify(this.input)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP error ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === "error") {
+                            this.message = 'ログインIDかパスワードのいずれかが間違っています。'
+                        } else {
+                            window.location.href = 'match_list.html';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('エラー:', error);
+                    });
+            }
+        }
+    });
 
-        app.mount('#app');
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    app.mount('#app');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

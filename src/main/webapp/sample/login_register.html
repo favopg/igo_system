@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ユーザー登録 - 囲碁対戦成績管理</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
+    <style>
+        .header {
+            background-color: #0d6efd;
+            color: white;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .register-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .form-field {
+            width: 500px;
+        }
+
+        .btn-wrapper {
+            text-align: right;
+            margin-top: 1rem;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- ヘッダー -->
+    <header class="header">
+        <div class="container">
+            <h1 class="h3 mb-0">囲碁対戦成績管理</h1>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="container">
+        <div class="register-form">
+            <h2 class="mb-4">ユーザー登録</h2>
+            <form @submit.prevent="register">
+                <div class="mb-3">
+                    <h5>{{ message }}</h5>
+                    <label for="loginId" class="form-label">ログインID</label>
+                    <input
+                            type="text"
+                            class="form-control form-field"
+                            id="loginId"
+                            v-model="input.name"
+                            required
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">パスワード</label>
+                    <input
+                            type="password"
+                            class="form-control form-field"
+                            id="password"
+                            v-model="input.password"
+                            required
+                    >
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">パスワード（確認）</label>
+                    <input
+                            type="password"
+                            class="form-control form-field"
+                            id="confirmPassword"
+                            v-model="input.confirmPassword"
+                            required
+                    >
+                </div>
+
+                <!-- プロ・アマ選択 -->
+                <div class="mb-3">
+                    <label class="form-label">区分</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input
+                                    type="radio"
+                                    id="pro"
+                                    value="1"
+                                    v-model="input.chessAbilityKbn"
+                                    name="chessAbilityKbn"
+                                    required
+                            >
+                            <label for="pro">プロ</label>
+                        </div>
+                        <div class="radio-option">
+                            <input
+                                    type="radio"
+                                    id="amateur"
+                                    value="0"
+                                    v-model="input.chessAbilityKbn"
+                                    name="chessAbilityKbn"
+                            >
+                            <label for="amateur">アマ</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 段級位選択 -->
+                <div class="mb-3">
+                    <label for="chessAbilityKbn" class="form-label">段級位</label>
+                    <select
+                            id="chessAbilityKbn"
+                            class="form-select form-field"
+                            v-model="input.chessAbility"
+                            :required="input.chessAbilityKbn === 'amateur'"
+                    >
+                        <option value="">選択してください</option>
+                        <option value="高段者">高段者</option>
+                        <option value="有段者">有段者</option>
+                        <option value="級位者">級位者</option>
+                        <option value="入門">入門</option>
+                    </select>
+                    <div class="form-text" v-if="input.chessAbilityKbn === 'amateur'">
+                        アマチュアの場合は段級位を選択してください
+                    </div>
+                </div>
+
+                <div class="btn-wrapper">
+                    <button
+                            type="submit"
+                            class="btn btn-primary"
+                    >
+                        登録する
+                    </button>
+                </div>
+            </form>
+            <div class="login-link">
+                <p>すでにアカウントをお持ちの方は<a href="index.html">こちら</a>からログインしてください。</p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                input: {
+                    name: '',
+                    password: '',
+                    confirmPassword: '',
+                    chessAbilityKbn: '', // プロかアマか
+                    chessAbility: '' // 段級位
+                },
+                message: ''
+            }
+        },
+        methods: {
+            register() {
+                // パスワードと確認用パスワードが一致するか確認
+                if (this.input.password !== this.input.confirmPassword) {
+                    this.message = 'パスワードが一致しません。';
+                    return;
+                }
+
+                // アマチュアの場合は段級位が必須
+                if (this.input.chessAbilityKbn === 'amateur' && !this.input.chessAbility) {
+                    this.message = 'アマチュアの場合は段級位を選択してください。';
+                    return;
+                }
+
+                // 登録用のデータを作成
+                const registerData = {
+                    name: this.input.name,
+                    password: this.input.password,
+                    chessAbilityKbn: this.input.chessAbilityKbn,
+                    chessAbility: this.input.chessAbility
+                };
+
+                // サーバーに登録リクエストを送信
+                fetch('login/register', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(registerData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('HTTP error ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === "error") {
+                            this.message = data.message || 'ユーザー登録に失敗しました。';
+                        } else {
+                            // 登録成功時はログインページにリダイレクト
+                            window.location.href = 'login.html';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('エラー:', error);
+                        this.message = 'サーバーとの通信中にエラーが発生しました。';
+                    });
+            }
+        }
+    });
+
+    app.mount('#app');
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
