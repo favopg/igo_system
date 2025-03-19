@@ -26,6 +26,9 @@ public interface MatchDao {
     @Insert
     public int insertMatch(MatchEntity entity);
 
+    @BatchInsert
+    public int[] insertCsv(List<MatchEntity> matchEntityList);
+
     @BatchDelete
     public int[] deleteMatch(List<MatchEntity> matchEntityList);
 

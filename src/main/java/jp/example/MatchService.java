@@ -2,6 +2,7 @@ package jp.example;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +67,6 @@ public class MatchService {
 
 		matchMapList.forEach(map -> {
 			if (map.containsKey("public_flag")) {
-				System.out.println(map.get("public_flag").toString());
 				if (map.get("public_flag").toString().equals("1")) {
 					map.put("public_flag", true);
 				} else {
@@ -211,4 +211,35 @@ public class MatchService {
 		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
 		return response;
 	}
+
+	/**
+	 * 入力情報から、対戦テーブルを複数削除します。<br>
+	 * {@link MatchDao.insertCsv(List)}
+	 * @param matchList CSVの対戦一覧リスト
+	 * @return APIレスポンスを詰めた　JSONObject
+	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
+	 */
+	public JSONObject insertList(String loginId,List<Map<String, Object>> matchList) {
+		JSONObject response = new JSONObject();
+
+		List<MatchEntity> matchEntityList = new ArrayList<>();
+		for (Map<String, Object> matchInfo : matchList) {
+			MatchEntity entity = new MatchEntity();
+			entity.setId(matchInfo.get("id") == null ? 0 : Integer.parseInt(matchInfo.get("id").toString()));
+			entity.setBlackName(matchInfo.get("black_name").toString());
+			entity.setWhiteName(matchInfo.get("white_name").toString());
+			entity.setResult(matchInfo.get("result").toString());
+			Date matchAt = (Date) matchInfo.get("match_at");
+			entity.setMatchAt(new java.sql.Date(matchAt.getTime()));
+			entity.setPublicFlag((Boolean) matchInfo.get("public_flag"));
+			entity.setCreatedUserId(Integer.parseInt(loginId));
+			matchEntityList.add(entity);
+		}
+
+		// 差分更新実行
+		dao.insertCsv(matchEntityList);
+		response.put(ApiResponse.STATUS.getCode(), ApiResponse.OK.getCode());
+		return response;
+	}
+
 }
