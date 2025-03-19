@@ -105,6 +105,13 @@ const formInput = Vue.createApp({
                 .then(data => {
                     // モーダルを閉じる
                     closeModal(modalInfo.modalElement, modalInfo.modal)
+                    const responseJson = JSON.stringify(data, null, 2)
+                    const parsedData = JSON.parse(responseJson)
+                    if (parsedData.status === 'error') {
+                        this.errorInfo.errorMessage = parsedData.message;
+                        throw new Error(this.errorInfo.errorMessage);
+                    }
+
                 })
                 .then(()=> {
                     // 閉じた後に次のモーダルを開く
