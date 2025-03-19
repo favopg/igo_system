@@ -27,8 +27,4 @@ from
     matches
 where
     public_flag = 1 AND
-    NOT EXISTS(
-        select 1
-        from matches
-        where created_user_id = /* userId */99
-    )
+    created_user_id <> /* userId */99
