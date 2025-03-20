@@ -58,7 +58,7 @@ const matchList = Vue.createApp({
 
     },
     methods: {
-        // ページ遷移 TODO 算出プロパティは無理・・・？
+        // ページ遷移
         pageTransition(page) {
             this.currentPage = page
         },

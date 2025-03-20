@@ -88,9 +88,9 @@
 
                 <div class="container mt-4">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group">
-                                <label for="displayCount" class="mb-2">1ページの表示件数</label>
+                                <label for="displayCount" class="mb-2">表示件数</label>
                                 <select v-model="displayCount" class="form-control" id="displayCount">
                                     <option value="10">10</option>
                                     <option value="20">20</option>
@@ -99,7 +99,7 @@
                             </div>
                         </div>
 
-                        <div class="col-4">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="selectedKeyWord" class="mb-2">選択式検索</label>
                                 <select v-model="selectedKeyWord" @change="searchFilter" class="form-control" id="selectedKeyWord">
@@ -109,7 +109,7 @@
                             </div>
                         </div>
 
-                        <div class="col-4">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group">
                                 <label for="inputKeyword" class="mb-2">キーワード検索</label>
                                 <input type="text" v-model="inputKeyword" placeholder="例：黒番の名前" class="form-control" id="inputKeyword">
@@ -142,21 +142,21 @@
                         <tbody>
                         <!-- <div>Checked names: {{ delCheckList }}</div> -->
                         <tr v-for="matchInfo in displayMatches" :key="matchInfo.id">
-                            <td><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
-                            <td>{{ matchInfo.id }}</td>
-                            <td>
+                            <td data-title=""><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
+                            <td data-title="ID">{{ matchInfo.id }}</td>
+                            <td data-title="編集">
                                 <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, matchInfo)">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                             </td>
-                            <td>{{ matchInfo.black_name }}</td>
-                            <td>{{ matchInfo.white_name }}</td>
-                            <td>{{ matchInfo.result }}</td>
-                            <td>
+                            <td data-title="黒番">{{ matchInfo.black_name }}</td>
+                            <td data-title="白番">{{ matchInfo.white_name }}</td>
+                            <td data-title="結果">{{ matchInfo.result }}</td>
+                            <td data-title="棋譜">
                                 <a :href="matchInfo.result_link" target="_blank">棋譜を見る</a>
                             </td>
-                            <td>{{ matchInfo.match_at }}</td>
-                            <td>{{ matchInfo.comment }}</td>
+                            <td data-title="対戦日">{{ matchInfo.match_at }}</td>
+                            <td data-title="コメント">{{ matchInfo.comment }}</td>
                         </tr>
                         </tbody>
                     </table>
