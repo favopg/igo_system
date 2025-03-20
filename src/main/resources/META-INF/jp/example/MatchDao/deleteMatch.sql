@@ -1,0 +1,1 @@
+delete from matches where id = /* id */0 and created_user_id = /* created_user_id */0
