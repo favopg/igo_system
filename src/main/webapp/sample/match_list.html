@@ -142,7 +142,7 @@
                         <tbody>
                         <!-- <div>Checked names: {{ delCheckList }}</div> -->
                         <tr v-for="matchInfo in displayMatches" :key="matchInfo.id">
-                            <td data-title=""><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
+                            <td data-title="" v-if="loginId === matchInfo.created_user_id"><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
                             <td data-title="ID">{{ matchInfo.id }}</td>
                             <td data-title="編集">
                                 <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, matchInfo)">

@@ -193,16 +193,18 @@ public class MatchService {
 	 * 入力情報から、対戦テーブルを複数削除します。<br>
 	 * {@link MatchDao#deleteMatch(List)}
 	 * @param matchIds 選択された対戦ID
+	 * @param userId ログインユーザID
 	 * @return APIレスポンスを詰めた　JSONObject
 	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。
 	 */
-	public JSONObject delete(int[] matchIds) {
+	public JSONObject delete(int[] matchIds, int userId) {
 		JSONObject response = new JSONObject();
 
 		List<MatchEntity> matchEntityList = new ArrayList<>();
         for (int matchId : matchIds) {
             MatchEntity entity = new MatchEntity();
             entity.setId(matchId);
+			entity.setCreatedUserId(userId);
             matchEntityList.add(entity);
         }
 

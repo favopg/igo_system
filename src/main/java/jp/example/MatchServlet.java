@@ -112,7 +112,7 @@ public class MatchServlet extends HttpServlet {
 
             // セッション情報が取れない場合はAPIエラーとして返却する
             HttpSession session = req.getSession(false);
-            if (req.getSession() == null) {
+            if (session == null) {
                 throw new RuntimeException("セッション情報取得でエラー発生");
             }
 
@@ -189,8 +189,17 @@ public class MatchServlet extends HttpServlet {
             int[] ids = objectMapper.readValue(req.getInputStream(),int[].class);
             logger.debug("削除選択された対戦件数{}", ids.length);
 
+            // セッション情報が取れない場合はAPIエラーとして返却する
+            HttpSession session = req.getSession(false);
+            if (session == null) {
+                throw new RuntimeException("セッション情報取得でエラー発生");
+            }
+
+            SessionInfo sessionInfo = (SessionInfo) session.getAttribute("sessionInfo");
+            logger.debug("セッション情報{}",sessionInfo.toString());
+
             MatchService service = new MatchService();
-            JSONObject response = service.delete(ids);
+            JSONObject response = service.delete(ids, sessionInfo.getUserId());
 
             ServletUtil.apiResponse(res, response);
 
