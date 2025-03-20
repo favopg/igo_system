@@ -124,42 +124,43 @@
                         選択した対戦を削除
                     </button>
                 </div>
-
-                <table class="table table-striped table-sm">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <th>ID</th>
-                        <th>編集</th>
-                        <th>黒番</th>
-                        <th>白番</th>
-                        <th>結果</th>
-                        <th>棋譜</th>
-                        <th>対局日</th>
-                        <th>コメント</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!-- <div>Checked names: {{ delCheckList }}</div> -->
-                    <tr v-for="matchInfo in displayMatches" :key="matchInfo.id">
-                        <td><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
-                        <td>{{ matchInfo.id }}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, matchInfo)">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </td>
-                        <td>{{ matchInfo.black_name }}</td>
-                        <td>{{ matchInfo.white_name }}</td>
-                        <td>{{ matchInfo.result }}</td>
-                        <td>
-                            <a :href="matchInfo.result_link" target="_blank">棋譜を見る</a>
-                        </td>
-                        <td>{{ matchInfo.match_at }}</td>
-                        <td>{{ matchInfo.comment }}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>ID</th>
+                            <th>編集</th>
+                            <th>黒番</th>
+                            <th>白番</th>
+                            <th>結果</th>
+                            <th>棋譜</th>
+                            <th>対局日</th>
+                            <th>コメント</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!-- <div>Checked names: {{ delCheckList }}</div> -->
+                        <tr v-for="matchInfo in displayMatches" :key="matchInfo.id">
+                            <td><input type="checkbox" :value="matchInfo.id" v-model="delCheckList"></td>
+                            <td>{{ matchInfo.id }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-secondary" @click="transitionEdit($event, matchInfo)">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            </td>
+                            <td>{{ matchInfo.black_name }}</td>
+                            <td>{{ matchInfo.white_name }}</td>
+                            <td>{{ matchInfo.result }}</td>
+                            <td>
+                                <a :href="matchInfo.result_link" target="_blank">棋譜を見る</a>
+                            </td>
+                            <td>{{ matchInfo.match_at }}</td>
+                            <td>{{ matchInfo.comment }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
                 <!-- ページング -->
                 <nav aria-label="Page navigation">
