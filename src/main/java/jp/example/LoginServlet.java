@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet(urlPatterns = {"/sample/login", "/sample/login/register"})
+@WebServlet(urlPatterns = {"/igo_app/login", "/igo_app/login/register"})
 public class LoginServlet extends HttpServlet {
 
 	private static final Logger logger = LoggerFactory.getLogger(LoginServlet.class);
@@ -35,7 +35,7 @@ public class LoginServlet extends HttpServlet {
 		String endpoint = req.getServletPath();
 		
 		switch(endpoint) {
-			case "/sample/login":
+			case "/igo_app/login":
 				login(req, res);
 			break;
 			

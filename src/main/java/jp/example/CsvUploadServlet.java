@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet("/sample/uploadCsv")
+@WebServlet("/igo_app/uploadCsv")
 @MultipartConfig
 public class CsvUploadServlet extends HttpServlet {
 

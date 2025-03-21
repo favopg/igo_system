@@ -29,6 +29,24 @@ const naviSidever = Vue.createApp({
 
 naviSidever.component("navi_sideber", {
     props: ['activekbn'],
+    methods: {
+        logout() {
+            fetch('igo_system/logout')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('ログアウトに失敗しました');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    window.location.href = 'login.html';
+                })
+                .catch(error => {
+                    console.error('エラー:', error);
+                    alert('ログアウト処理に失敗しました')
+                });
+        }
+    },
     template: `
 		<div class="sidebar-content">
     		<h3 class="text-white mb-4">メニュー</h3>
@@ -50,7 +68,7 @@ naviSidever.component("navi_sideber", {
                 	</li>
             	</ul>
     	</div>
-    	<button class="btn btn-danger w-100">
+    	<button class="btn btn-danger w-100" @click="logout()">
             <i class="bi bi-box-arrow-right me-2"></i>ログアウト
       </button>
 	`,

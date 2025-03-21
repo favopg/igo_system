@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@WebServlet(urlPatterns = {"/sample/igo_system", "/sample/igo_system/refer"})
+@WebServlet(urlPatterns = {"/igo_app/igo_system", "/igo_app/igo_system/refer"})
 public class MatchServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchServlet.class);
@@ -30,7 +30,7 @@ public class MatchServlet extends HttpServlet {
             logger.debug("リクエストパス{}", path);
 
             switch (path) {
-                case "/sample/igo_system/refer":
+                case "/igo_app/igo_system/refer":
                     refer(req, res);
                     break;
 
