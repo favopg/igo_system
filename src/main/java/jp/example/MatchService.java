@@ -231,10 +231,13 @@ public class MatchService {
 			entity.setBlackName(matchInfo.get("black_name").toString());
 			entity.setWhiteName(matchInfo.get("white_name").toString());
 			entity.setResult(matchInfo.get("result").toString());
+			entity.setResultLink(matchInfo.get("result_link").toString());
 			Date matchAt = (Date) matchInfo.get("match_at");
 			entity.setMatchAt(new java.sql.Date(matchAt.getTime()));
 			entity.setPublicFlag((Boolean) matchInfo.get("public_flag"));
 			entity.setCreatedUserId(Integer.parseInt(loginId));
+			entity.setComment(matchInfo.get("comment").toString());
+
 			matchEntityList.add(entity);
 		}
 

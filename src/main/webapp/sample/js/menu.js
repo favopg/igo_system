@@ -44,7 +44,7 @@ naviSidever.component("navi_sideber", {
                     	</a>
                 	</li>
                 	<li class="nav-item mb-2">
-                    	<a href="#" class="nav-link text-white" :class="activekbn === '3' ? 'active':'' ">
+                    	<a href="upload_csv.html" class="nav-link text-white" :class="activekbn === '3' ? 'active':'' ">
                         	<i class="bi bi-file-earmark-arrow-up me-2"></i>CSV取込
                     	</a>
                 	</li>

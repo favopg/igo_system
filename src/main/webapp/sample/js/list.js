@@ -20,14 +20,14 @@ const matchList = Vue.createApp({
         },
         // ページ数制御
         calcTotalPageLink() {
+            // 1ページ目に戻った上で再描画
+            //this.currentPage = 1;
             this.totalPage = Math.ceil(this.searchFilter.length / this.displayCount)
             return this.totalPage
         },
 
         // 対戦一覧表示件数制御
         displayMatches() {
-            // 1ページ目に戻った上で再描画
-            this.currentPage = 1;
             const start = (this.currentPage - 1) * this.displayCount;
             const end = start + Number(this.displayCount)
             return this.searchFilter.slice(start, end);

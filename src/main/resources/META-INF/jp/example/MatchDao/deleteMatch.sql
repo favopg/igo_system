@@ -1,1 +1,1 @@
-delete from matches where id = /* id */0 and created_user_id = /* created_user_id */0
+delete from matches where id = /* matchEntityList.id */0 and created_user_id = /* matchEntityList.createdUserId */0

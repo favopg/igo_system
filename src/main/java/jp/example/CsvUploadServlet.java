@@ -23,20 +23,36 @@ import org.slf4j.LoggerFactory;
 public class CsvUploadServlet extends HttpServlet {
 
     private static final Logger logger = LoggerFactory.getLogger(CsvUploadServlet.class);
+    static Map<String, String> mapping = new HashMap<String, String>();
+
+    static {
+        mapping.put("対戦ID", "id");
+        mapping.put("黒番", "black_name");
+        mapping.put("白番", "white_name");
+        mapping.put("対戦日", "match_at");
+        mapping.put("結果", "result");
+        mapping.put("公開フラグ", "public_flag");
+        mapping.put("棋譜URL", "result_link");
+        mapping.put("コメント", "comment");
+    }
 
     @Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse res)
-			throws ServletException, IOException {
-		
-		Part filePart = request.getPart("file");
-        JSONObject response = new JSONObject();
+	protected void doPost(HttpServletRequest request, HttpServletResponse res) {
 
-		if (filePart == null || filePart.getSize() == 0) {
-            response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
-            response.put("message", "CSVファイルアップロードに失敗しました");
-            ServletUtil.apiResponse(res, response);
-            return;
-		}
+        JSONObject response = new JSONObject();
+        Part filePart = null;
+        try {
+            filePart = request.getPart("file");
+            if (filePart == null || filePart.getSize() == 0) {
+                response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
+                response.put("message", "CSVファイルアップロードに失敗しました");
+                ServletUtil.apiResponse(res, response);
+                return;
+            }
+        } catch (Exception e) {
+            logger.debug("システムエラー{}",e.getMessage());
+            throw new RuntimeException(e);
+        }
 		
 		List<Map<String, Object>> jsonData = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(filePart.getInputStream(), StandardCharsets.UTF_8))) {
@@ -60,25 +76,25 @@ public class CsvUploadServlet extends HttpServlet {
                 Map<String, Object> row = new HashMap<>();
                 for (int i = 0; i < headers.length; i++) {
                     // 対戦日の設定
-                    if (headers[i].trim().equals("match_at")) {
+                    if (headers[i].trim().equals("対戦日")) {
                         Date date = dateFormat.parse(values[i].trim());
                         logger.debug("対戦日変換前{}",values[i].trim());
                         logger.debug("対戦日{}",date);
 
-                        row.put(headers[i].trim(), date);
+                        row.put(getMapping(headers[i].trim()), date);
                         continue;
                     }
                     // 公開フラグの設定
-                    if (headers[i].trim().equals("public_flag")) {
-                        if (headers[i].trim().equals("1")) {
-                            row.put(headers[i].trim(), true);
+                    if (headers[i].trim().equals("公開フラグ")) {
+                        if (values[i].trim().equals("1")) {
+                            row.put(getMapping(headers[i].trim()), true);
                         } else {
-                            row.put(headers[i].trim(), false);
+                            row.put(getMapping(headers[i].trim()), false);
                         }
                         continue;
                     }
                     // 上記以外は文字列データ
-                    row.put(headers[i].trim(), i < values.length ? values[i].trim() : "");
+                    row.put(getMapping(headers[i].trim()), i < values.length ? values[i].trim() : "");
                 }
                 jsonData.add(row);
             }
@@ -106,9 +122,19 @@ public class CsvUploadServlet extends HttpServlet {
         ServletUtil.apiResponse(res, response);
 
         } catch (Exception e) {
+            logger.debug("システムエラー{}",e.getMessage());
             throw new RuntimeException(e);
         }
 
 
+    }
+
+    /**
+     * 後続処理用にリクエストのヘッダー項目を変換する
+     * @param header ヘッダー項目名
+     * @return 変換後のヘッダー項目名
+     */
+    private String getMapping(String header) {
+        return mapping.get(header);
     }
 }
