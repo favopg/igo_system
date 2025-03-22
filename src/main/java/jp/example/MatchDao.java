@@ -32,7 +32,7 @@ public interface MatchDao {
     @BatchDelete(sqlFile = true)
     public int[] deleteMatch(List<MatchEntity> matchEntityList);
 
-    @Update
+    @Update(sqlFile = true)
     public int updateMatch(MatchEntity entity);
 
 }
