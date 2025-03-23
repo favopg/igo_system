@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;

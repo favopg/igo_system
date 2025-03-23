@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +30,7 @@ class CsvUploadServletTest {
 		context.setContextPath("/");
 		server.setHandler(context);
 
-		ServletHolder servletHolder = new ServletHolder(new CsvSampleServlet());
+		ServletHolder servletHolder = new ServletHolder(new CsvUploadServlet());
 		// MultipartConfigを適用する
 		servletHolder.getRegistration().setMultipartConfig(
 			    new MultipartConfigElement("/tmp", 10 * 1024 * 1024, 50 * 1024 * 1024, 1024 * 1024)

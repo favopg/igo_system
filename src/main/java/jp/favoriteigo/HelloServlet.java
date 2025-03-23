@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import static java.util.Objects.*;
 
@@ -21,9 +21,7 @@ public class HelloServlet extends HttpServlet {
 		
 		// TODO GETの場合はいったんjspを返すようにソースを残しておく
 		req.setAttribute("message", requireNonNullElse(req.getParameter("name"), "World"));
-		req.getRequestDispatcher("/WEB-INF/view/hello.jsp").forward(req, res);
-						
-	}
+    }
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {

@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import static org.junit.jupiter.api.Assertions.*;
 

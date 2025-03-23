@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

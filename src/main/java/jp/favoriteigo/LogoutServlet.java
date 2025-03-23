@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

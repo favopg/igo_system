@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;

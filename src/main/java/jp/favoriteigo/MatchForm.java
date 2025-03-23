@@ -1,49 +1,30 @@
-package jp.example;
+package jp.favoriteigo;
 
-import org.seasar.doma.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.sql.Date;
 
-@Entity
-@Table(name = "matches")
-public class MatchEntity {
+public class MatchForm {
 
-	@Column(name = "id")
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
-
-	@Column(name = "black_name")
+	@NotBlank(message = "黒番は必ず入力してください")
 	private String blackName = null;
 
-	@Column(name = "white_name")
+	@NotBlank(message = "白番は必ず入力してください")
 	private String whiteName = null;
 
-	@Column(name = "result")
+	@NotBlank(message = "結果は必ず入力してください")
 	private String result = null;
 
-	@Column(name = "result_link")
 	private String resultLink = null;
 
-	@Column(name = "comment")
 	private String comment = null;
 
-	@Column(name = "match_at")
 	private Date matchAt= null;
 
-	@Column(name = "public_flag")
 	private boolean publicFlag = false;
 
-	@Column(name = "created_user_id")
 	private int createdUserId = 0;
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
+	private int id= 0;
 
 	public String getBlackName() {
 		return blackName;
@@ -109,9 +90,27 @@ public class MatchEntity {
 		this.createdUserId = createdUserId;
 	}
 
+	public int getId() {
+		return id;
+	}
 
-	
+	public void setId(int id) {
+		this.id = id;
+	}
 
-	
 
+	@Override
+	public String toString() {
+		return "MatchForm{" +
+				"blackName=" + blackName +
+				", whiteName=" + whiteName +
+				", result=" + result +
+				", resultLink=" + resultLink +
+				", comment=" + comment +
+				", matchAt=" + matchAt +
+				", publicFlag=" + publicFlag +
+				", createdUserId=" + createdUserId +
+				", id=" + id +
+				"}";
+	}
 }

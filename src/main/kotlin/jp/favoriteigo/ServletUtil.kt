@@ -1,4 +1,4 @@
-package jp.example
+package jp.favoriteigo
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletRequest

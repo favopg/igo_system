@@ -1,4 +1,4 @@
-package jp.example
+package jp.favoriteigo
 
 import jakarta.validation.Validation
 import org.json.JSONObject

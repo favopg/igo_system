@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import java.util.Map;
 

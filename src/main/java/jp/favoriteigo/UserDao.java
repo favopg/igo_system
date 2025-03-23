@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import org.seasar.doma.Dao;
 import org.seasar.doma.Insert;

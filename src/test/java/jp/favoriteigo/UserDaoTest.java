@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -6,7 +6,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.seasar.doma.jdbc.Config;
 import org.seasar.doma.jdbc.tx.TransactionManager;
 
-import java.sql.SQLException;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;

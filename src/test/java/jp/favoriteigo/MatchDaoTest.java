@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

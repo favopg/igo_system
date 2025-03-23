@@ -1,4 +1,4 @@
-package jp.example;
+package jp.favoriteigo;
 
 public enum ApiResponse {
     OK("success"), NG("error"), STATUS("status");

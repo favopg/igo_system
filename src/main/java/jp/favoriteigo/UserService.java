@@ -1,15 +1,11 @@
-package jp.example;
+package jp.favoriteigo;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.json.JSONObject;
 import org.mindrot.jbcrypt.BCrypt;
-import org.seasar.doma.jdbc.Config;
 import org.seasar.doma.jdbc.tx.TransactionManager;
 
 /**

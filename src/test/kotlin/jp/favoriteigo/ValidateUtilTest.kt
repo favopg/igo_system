@@ -1,8 +1,7 @@
-package jp.example
+package jp.favoriteigo
 
 import org.json.JSONObject
 import org.junit.jupiter.api.Assertions.*
-import org.mockito.internal.matchers.Matches
 import kotlin.test.Test
 
 class ValidateUtilTest {
