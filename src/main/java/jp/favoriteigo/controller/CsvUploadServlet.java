@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.controller;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,6 +11,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jp.favoriteigo.common.ApiResponse;
+import jp.favoriteigo.service.MatchService;
+import jp.favoriteigo.ServletUtil;
+import jp.favoriteigo.common.SessionInfo;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

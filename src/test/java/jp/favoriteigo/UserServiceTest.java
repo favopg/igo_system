@@ -2,6 +2,8 @@ package jp.favoriteigo;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import jp.favoriteigo.form.UserForm;
+import jp.favoriteigo.service.UserService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

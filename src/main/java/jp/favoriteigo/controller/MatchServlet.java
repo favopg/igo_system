@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.controller;
 
 import java.io.PrintWriter;
 
@@ -9,6 +9,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import jakarta.servlet.http.HttpSession;
+import jp.favoriteigo.*;
+import jp.favoriteigo.common.ApiResponse;
+import jp.favoriteigo.common.SessionInfo;
+import jp.favoriteigo.form.MatchForm;
+import jp.favoriteigo.service.MatchService;
 import org.json.JSONObject;
 
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

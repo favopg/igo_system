@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.sample;
 
 import static java.util.Objects.*;
 
@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import jp.favoriteigo.common.PropertyUtil;
 import org.json.JSONObject;
 
 @WebServlet("/hello")

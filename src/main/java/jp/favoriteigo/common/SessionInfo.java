@@ -1,4 +1,6 @@
-package jp.favoriteigo;
+package jp.favoriteigo.common;
+
+import jp.favoriteigo.controller.LoginServlet;
 
 /**
  * SessionInfo  

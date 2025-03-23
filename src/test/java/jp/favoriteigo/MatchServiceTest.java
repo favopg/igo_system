@@ -1,5 +1,8 @@
 package jp.favoriteigo;
 
+import jp.favoriteigo.common.SessionInfo;
+import jp.favoriteigo.form.MatchForm;
+import jp.favoriteigo.service.MatchService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 

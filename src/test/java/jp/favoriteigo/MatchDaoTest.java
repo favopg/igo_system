@@ -1,5 +1,10 @@
 package jp.favoriteigo;
 
+import jp.favoriteigo.config.AppConfig;
+import jp.favoriteigo.dao.MatchDao;
+import jp.favoriteigo.dao.MatchDaoImpl;
+import jp.favoriteigo.entity.MatchEntity;
+import jp.favoriteigo.entity.UserEntity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.seasar.doma.jdbc.Config;

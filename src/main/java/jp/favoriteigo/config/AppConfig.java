@@ -1,6 +1,7 @@
-package jp.favoriteigo;
+package jp.favoriteigo.config;
 
 
+import jp.favoriteigo.common.PropertyUtil;
 import org.seasar.doma.jdbc.*;
 import org.seasar.doma.jdbc.dialect.Dialect;
 import org.seasar.doma.jdbc.dialect.MysqlDialect;

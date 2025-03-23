@@ -1,5 +1,6 @@
-package jp.favoriteigo;
+package jp.favoriteigo.dao;
 
+import jp.favoriteigo.entity.UserEntity;
 import org.seasar.doma.Dao;
 import org.seasar.doma.Insert;
 import org.seasar.doma.Select;

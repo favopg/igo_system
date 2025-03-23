@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -6,6 +6,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import jp.favoriteigo.common.ApiResponse;
+import jp.favoriteigo.common.SessionInfo;
+import jp.favoriteigo.config.AppConfig;
+import jp.favoriteigo.controller.MatchServlet;
+import jp.favoriteigo.dao.MatchDao;
+import jp.favoriteigo.dao.MatchDaoImpl;
+import jp.favoriteigo.entity.MatchEntity;
+import jp.favoriteigo.form.MatchForm;
 import org.apache.commons.beanutils.BeanUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -216,7 +224,7 @@ public class MatchService {
 
 	/**
 	 * 入力情報から、対戦テーブルを複数削除します。<br>
-	 * {@link MatchDao.insertCsv(List)}
+	 * {@link MatchDao#insertCsv(List)}
 	 * @param matchList CSVの対戦一覧リスト
 	 * @return APIレスポンスを詰めた　JSONObject
 	 * @throws RuntimeException DBアクセスエラーの場合にスローされます。

@@ -1,5 +1,7 @@
-package jp.favoriteigo;
+package jp.favoriteigo.dao;
 
+import jp.favoriteigo.entity.MatchEntity;
+import jp.favoriteigo.service.MatchService;
 import org.seasar.doma.*;
 
 import java.util.List;

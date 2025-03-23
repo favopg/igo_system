@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.entity;
 
 import org.seasar.doma.*;
 

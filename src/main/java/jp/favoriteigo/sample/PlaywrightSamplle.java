@@ -1,4 +1,4 @@
-package jp.favoriteigo;
+package jp.favoriteigo.sample;
 
 import java.nio.file.Paths;
 
