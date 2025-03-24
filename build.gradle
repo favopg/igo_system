@@ -38,6 +38,8 @@ dependencies {
 	implementation group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.4'
 	// kotlinテスト用
 	testImplementation 'org.jetbrains.kotlin:kotlin-test'
+	// mockito導入
+	testImplementation("org.mockito:mockito-core:4.11.0")
 	// domaセット
 	implementation 'org.seasar.doma:doma-core:3.0.1'
 	annotationProcessor 'org.seasar.doma:doma-processor:3.0.1'
@@ -71,6 +73,13 @@ flyway {
 // kotlin用
 test {
 	useJUnitPlatform()
+}
+
+// JDKバージョン指定
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(18)
+	}
 }
 
 tasks.withType(JavaCompile) {
