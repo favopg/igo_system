@@ -95,7 +95,7 @@ public class UserService {
 			return dao.selectFindByName(userForm.getName());
 		});
 
-		if (userMap.isEmpty()) {
+		if (userMap == null) {
 			response.put(ApiResponse.STATUS.getCode(), ApiResponse.NG.getCode());
 			return response;
 		}
